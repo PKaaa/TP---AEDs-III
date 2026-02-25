@@ -1,9 +1,7 @@
-package TP;
 import java.time.LocalDate;
 import java.io.*;
-import TP.Registro; //tirar esse import depois e implementar (implements) Registro
 
-public class Cliente extends Registro {
+public class Cliente implements Registro {
      private int id;
      private String nome;
      private LocalDate dataNascimento;
@@ -84,3 +82,4 @@ public class Cliente extends Registro {
           return baos.toByteArray();
      }
 }
+
