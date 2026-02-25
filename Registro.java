@@ -1,5 +1,3 @@
-package TP;
-
 import java.io.*;
 
 public interface Registro {
@@ -8,3 +6,4 @@ public interface Registro {
      public byte[] toByteArray () throws IOException;
      public void fromByteArray (byte[] b) throws IOException;
 }
+
