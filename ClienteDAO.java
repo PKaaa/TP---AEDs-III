@@ -1,9 +1,5 @@
-package TP;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-import TP.Cliente; //tirar depois
 
 public class ClienteDAO {
      private Arquivo <Cliente> arq;
@@ -29,3 +25,4 @@ public class ClienteDAO {
           return arq.delete(id);
      }
 }
+
