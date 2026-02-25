@@ -1,5 +1,3 @@
-package TP;
-
 import java.io.*;
 import java.lang.reflect.Constructor;
 
@@ -218,4 +216,5 @@ public class Arquivo <T extends Registro> {
      public void clode() throws Exception {
           arquivo.close();
      }
+
 }
