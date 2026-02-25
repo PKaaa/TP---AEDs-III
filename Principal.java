@@ -1,5 +1,3 @@
-package TP;
-
 import java.util.*;
 
 public class Principal {
@@ -43,3 +41,4 @@ public class Principal {
           }
      }
 }
+
