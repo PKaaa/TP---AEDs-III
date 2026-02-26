@@ -1,10 +1,8 @@
-package TP;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Alimento {
+public class Alimento implements Registro {
      private int id;
      private String nome;
      private String[] categoria;
@@ -65,3 +63,4 @@ public class Alimento {
           throw new UnsupportedOperationException ("Unimplemented method 'fromByteArray'");
      }
 }
+
