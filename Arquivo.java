@@ -32,7 +32,7 @@ public class Arquivo <T extends Registro> {
           obj.setId(newId);
           byte[] dados = obj.toByteArray();
 
-          long address = getDeleated (dados.length);
+          long address = getDeleted (dados.length);
 
           if (address == -1) {
                arquivo.seek (arquivo.length());
@@ -54,7 +54,6 @@ public class Arquivo <T extends Registro> {
           arquivo.seek (TAM_REGISTRO);
 
           while (arquivo.getFilePointer() < arquivo.length()) {
-               long address = arquivo.getFilePointer();
                byte lapide = arquivo.readByte();
                short tamanho = arquivo.readShort();
                byte[] dados = new byte[tamanho];
@@ -216,5 +215,4 @@ public class Arquivo <T extends Registro> {
      public void clode() throws Exception {
           arquivo.close();
      }
-
 }
