@@ -1,5 +1,3 @@
-package TP;
-
 import java.io.*;
 
 public class Receita implements Registro {
@@ -75,3 +73,4 @@ public class Receita implements Registro {
           throw new UnsupportedOperationException ("Unimplemented method 'fromByteArray'");
      }
 }
+
