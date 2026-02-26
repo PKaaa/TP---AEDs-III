@@ -36,6 +36,12 @@ public class Cliente implements Registro {
           this.senha = senha;
      }
 
+     public Cliente (String nome, LocalDate dataNascimento, LocalDate dataAdicao) {
+          this.nome = nome;
+          this.dataNascimento = dataNascimento;
+          this.dataAdicao = dataAdicao;
+     }
+
      //getters e setters
      public int getId() {return id;}
      public String getNome() {return nome;}
@@ -81,5 +87,10 @@ public class Cliente implements Registro {
 
           return baos.toByteArray();
      }
-}
 
+     @Override
+     public void fromByteArray(byte[] b) throws IOException {
+          // TODO Auto-generated method stub
+          throw new UnsupportedOperationException("Unimplemented method 'fromByteArray'");
+     }
+}
