@@ -22,7 +22,7 @@ public class Principal {
 
                     switch (opcao) {
                          case 1:
-                         MenuClientes menuClientes = new MenuClientes();
+                         MenuCliente menuClientes = new MenuCliente();
                          menuClientes.menu();
                          break;
                          case 0:
@@ -41,4 +41,3 @@ public class Principal {
           }
      }
 }
-
