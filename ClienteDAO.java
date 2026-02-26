@@ -25,4 +25,3 @@ public class ClienteDAO {
           return arq.delete(id);
      }
 }
-
