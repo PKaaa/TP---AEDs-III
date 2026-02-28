@@ -1,5 +1,5 @@
 import java.io.*;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.*;
 
 public class Arquivo <T extends Registro> {
      private static final int TAM_REGISTRO = 4;
@@ -70,6 +70,27 @@ public class Arquivo <T extends Registro> {
           return null;
      }
 
+     public T[] readAll() throws Exception {
+          arquivo.seek (TAM_REGISTRO);
+          T[] array = (T[]) java.lang.reflect.Array.newInstance(construtor.getDeclaringClass(), 0);
+          int count = 0;
+
+          while (arquivo.getFilePointer() < arquivo.length()) {
+               byte lapide = arquivo.readByte();
+               short tamanho = arquivo.readShort();
+               byte[] dados = new byte[tamanho];
+               arquivo.readFully(dados);
+
+               if (lapide == ' ') {
+                    T obj = construtor.newInstance();
+                    obj.fromByteArray(dados);
+                    array = java.util.Arrays.copyOf(array, count + 1);
+                    array[count++] = obj;
+               }
+          }
+          return array;
+     }
+     
      public boolean delete(int id) throws Exception {
           arquivo.seek(TAM_REGISTRO);
           
@@ -212,7 +233,7 @@ public class Arquivo <T extends Registro> {
           return -1;
      }
 
-     public void clode() throws Exception {
+     public void close() throws Exception {
           arquivo.close();
      }
 }
