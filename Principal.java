@@ -1,3 +1,5 @@
+package TP;
+
 import java.util.*;
 
 public class Principal {
@@ -11,6 +13,8 @@ public class Principal {
                     System.out.println("-------");
                     System.out.println("> Início");
                     System.out.println("\n1 - Clientes");
+                    System.out.println("\n2 - Alimentos");
+                    System.out.println("\n3 - Receitas");
                     System.out.println("0 - Sair");
                     System.out.print("\nOpção: ");
                     
@@ -25,6 +29,14 @@ public class Principal {
                          MenuCliente menuClientes = new MenuCliente();
                          menuClientes.menu();
                          break;
+                         case 2:
+                              MenuAlimento menuAlimentos = new MenuAlimento();
+                              menuAlimentos.menu();
+                              break;
+                         case 3:
+                              MenuReceitas menuReceitas = new MenuReceitas();
+                              menuReceitas.menu();
+                              break;
                          case 0:
                          System.out.println("Saindo...");
                          break;
