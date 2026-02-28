@@ -12,8 +12,26 @@ public class ReceitaDAO {
           return arq.create(r) > 0;
      }
 
-     public Receita buscarReceita (int id) throws Exception {
+     public Receita buscarReceitaID (int id) throws Exception {
           return arq.read(id);
+     }
+
+     public Receita buscarReceitaTitulo (String nome) throws Exception {
+          for (Receita r : arq.readAll()) {
+               if (r.getTitulo().equalsIgnoreCase(nome)) {
+                    return r;
+               }
+          }
+          return null;
+     }
+
+     public Receita buscarReceitaTempo (int tempo) throws Exception {
+          for (Receita r : arq.readAll()) {
+               if (r.getTempoPreparo() == tempo) {
+                    return r;
+               }
+          }
+          return null;
      }
 
      public boolean alterarReceita (Receita r) throws Exception {
@@ -24,4 +42,3 @@ public class ReceitaDAO {
           return arq.delete(id);
      }
 }
-
