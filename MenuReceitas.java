@@ -187,6 +187,22 @@ public class MenuReceitas {
                               System.out.println("\nReceita nao encontrada.");
                          }
                          break;
+                     case 4:
+                         System.out.println ("\n\nDigite a nova porção da receita: ");
+                         String porcao = console.nextLine();
+
+                         r = receitaDAO.buscarReceitaID(id);
+                         if (r != null) {
+                              r.setPorcao(porcao);
+                              if (receitaDAO.alterarReceita(r)) {
+                                   System.out.println ("\nReceita alterada com sucesso!");
+                              } else {
+                                   System.out.println ("\nErro ao alterar receita.");
+                              }
+                         } else {
+                              System.out.println("\nReceita nao encontrada.");
+                         }
+                         break;
                     default:
                          System.out.println ("\nOpção inválida!");
                          break;
@@ -206,4 +222,5 @@ public class MenuReceitas {
                System.out.println ("\nErro ao excluir receita.");
           }
      }
+
 }
