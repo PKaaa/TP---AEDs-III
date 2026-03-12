@@ -20,6 +20,7 @@ public class MenuReceitas {
                System.out.println ("\n\n3 - Alterar Receita");
                System.out.println ("\n\n4 - Excluir Receita");
                System.out.println ("\n\n0 - Voltar/Sair");
+               System.out.print("\nOpção: ");
 
                try {
                     op = console.nextInt();
@@ -227,4 +228,5 @@ public class MenuReceitas {
      }
 
 }
+
 
