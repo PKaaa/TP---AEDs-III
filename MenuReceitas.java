@@ -22,8 +22,10 @@ public class MenuReceitas {
                System.out.println ("\n\n0 - Voltar/Sair");
 
                try {
-                    op = Integer.valueOf(console.nextInt());
+                    op = console.nextInt();
+                    console.nextLine();
                } catch (NumberFormatException e) {
+                    console.nextLine();
                     op = -1;//erro
                }
 
@@ -105,14 +107,18 @@ public class MenuReceitas {
 
      private void incluirReceita() throws Exception {
           System.out.println ("\n\nDigite o nome da receita: ");
-          String nome = console.nextLine();
+          String nome = console.nextLine().trim();
+
           System.out.println ("\n\nDigite as informações da receita: ");
           String informacoes = console.nextLine();
+
           System.out.println ("\n\nDigite o tempo de preparo da receita (em minutos): ");
           int tempo = console.nextInt();
           console.nextLine();
+
           System.out.println ("\n\nDigite a porção da receita: ");
           String porcao = console.nextLine();
+          
           Receita r = new Receita(nome, informacoes, tempo, porcao);
           if (receitaDAO.incluirReceita(r)) {
                System.out.println ("\nReceita incluída com sucesso!");
@@ -200,5 +206,4 @@ public class MenuReceitas {
                System.out.println ("\nErro ao excluir receita.");
           }
      }
-
 }

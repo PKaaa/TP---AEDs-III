@@ -15,7 +15,7 @@ public class Receita implements Registro {
           this.porcao = "";
      }
 
-     public Receita (int id, String titulo, String infromacoes, int tempoPreparo, String porcao) {
+     public Receita (int id, String titulo, String informacoes, int tempoPreparo, String porcao) {
           this.id = id;
           this.titulo = titulo;
           this.informacoes = informacoes;
@@ -70,7 +70,13 @@ public class Receita implements Registro {
      }
 
      public void fromByteArray(byte[] b) throws IOException {
-          throw new UnsupportedOperationException ("Unimplemented method 'fromByteArray'");
+          ByteArrayInputStream bais = new ByteArrayInputStream(b);
+          DataInputStream dis = new DataInputStream(bais);
+
+          id = dis.readInt();
+          titulo = dis.readUTF();
+          informacoes = dis.readUTF();
+          tempoPreparo = dis.readInt();
+          porcao = dis.readUTF();
      }
 }
-
