@@ -36,10 +36,10 @@ public class Principal {
                               menuReceitas.menu();
                               break;
                          case 0:
-                         System.out.println("Saindo...");
-                         break;
+                              System.out.println("Saindo...");
+                              break;
                          default:
-                         System.out.println("Opção inválida!");
+                              System.out.println("Opção inválida!");
                          break;
                     }
                } while (opcao != 0);
@@ -51,3 +51,4 @@ public class Principal {
           }
      }
 }
+
