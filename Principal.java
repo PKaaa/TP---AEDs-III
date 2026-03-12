@@ -1,5 +1,3 @@
-package TP;
-
 import java.util.*;
 
 public class Principal {
@@ -15,7 +13,7 @@ public class Principal {
                     System.out.println("\n1 - Clientes");
                     System.out.println("\n2 - Alimentos");
                     System.out.println("\n3 - Receitas");
-                    System.out.println("0 - Sair");
+                    System.out.println("\n0 - Sair");
                     System.out.print("\nOpção: ");
                     
                     try {

@@ -1,5 +1,5 @@
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.format.*;
 import java.util.Scanner;
 
 public class MenuCliente {
@@ -20,7 +20,7 @@ public class MenuCliente {
                System.out.println ("\n3 - Alterar Cliente.");
                System.out.println ("\n4 - Excluir Cliente.");
                System.out.println ("\n0 - Voltar/Sair.");
-               System.out.println ("\n\nOpção: ");
+               System.out.println ("\nOpção: ");
 
                try {
                     op = Integer.valueOf(console.nextLine());
@@ -67,18 +67,23 @@ public class MenuCliente {
      }
 
      private void incluirCliente() {
-          System.out.println ("\n\nDigite o nome do cliente: ");
+          System.out.println ("\nDigite o nome do cliente: ");
           String nome = console.nextLine();
           System.out.println ("\nData de Nasciemento (dd/MM/aaaa): ");
           String dataNascimentoStr = console.nextLine();
-          LocalDate nascimento = LocalDate.parse (dataNascimentoStr, DateTimeFormatter.ofPattern ("dd/MM/yyyy"));
 
           try {
+               LocalDate nascimento = LocalDate.parse (dataNascimentoStr, DateTimeFormatter.ofPattern ("dd/MM/yyyy"));
                Cliente c = new Cliente (nome, nascimento, LocalDate.now());
+               c.setEmail(new String[0]);
+               c.setSenha("");
                clienteDAO.incluirCliente(c);
                System.out.println("\nCliente incluído com sucesso!");
+          } catch (DateTimeParseException e) {
+               System.out.println("\nFormato de data inválido.");
           } catch (Exception e) {
                System.out.println("\nErro ao incluir cliente.");
+               e.getMessage();
           }
      }
 
@@ -109,7 +114,7 @@ public class MenuCliente {
 
                System.out.println("Gostaria de alterar a senha? (S/N): ");
                char alterarSenha = console.nextLine().toUpperCase().charAt(0);
-               if (alterarSenha == 'S' || alterarSenha == `s) {
+               if (alterarSenha == 'S' || alterarSenha == 's') { //mudou o 's'
                     System.out.println ("Digite a nova senha: ");
                     String senha = console.nextLine();
                     c.setSenha(senha);
@@ -129,22 +134,21 @@ public class MenuCliente {
           console.nextLine();
 
           try {
-                Cliente c = clienteDAO.buscarCliente(id);
-                if (c == null) {
-                    System.out.println("Cliente não encontrado.");
+               Cliente c = clienteDAO.buscarCliente(id);
+               if (c == null) {
+                    System.out.println("Cliente nao encontrado.");
                     return;
                }
 
-               System.out.print ("Tem certeza que deseja excluir o cliente " + c.getNome() + "? (S/N): ");
+               System.out.println ("Tem certeza que deseja excluir o cliente " + c.getNome() + "? (S/N): ");
                char confirmar = console.nextLine().toUpperCase().charAt(0);
                if (confirmar == 'S' || confirmar == 's') {
                     if (clienteDAO.excluirCliente(id)) System.out.println ("Cliente excluido com sucesso.");
                     else System.out.println ("Erro ao excluir o cliente.");
                }
           } catch (Exception e) {
-               System.err.println ("Erro ao excluir o cliente");
-               e.getMessage();
+               System.err.println ("Erro ao excluir o cliente" + e.getMessage());
+               e.printStackTrace();
           }
      }
 }
-

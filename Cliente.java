@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.*;
 
 public class Cliente implements Registro {
@@ -8,6 +9,8 @@ public class Cliente implements Registro {
      private LocalDate dataAdicao;
      private String[] email;
      private String senha;     
+
+     private static DateTimeFormatter formatacao = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
      //cosntrutores
      public Cliente() {
@@ -61,8 +64,8 @@ public class Cliente implements Registro {
      public String toString() {
           return "Cliente {id = " + id + 
           "; Nome = " + nome + 
-          "; Data de Nascimento = " + dataNascimento + 
-          "; Data de Adição = " + dataAdicao + 
+          "; Data de Nascimento = " + dataNascimento.format(formatacao) + 
+          "; Data de Adição = " + dataAdicao.format(formatacao) + 
           "; Email = " + String.join(", ", email) + 
           "; Senha = " + senha + "}";
      }
@@ -90,7 +93,17 @@ public class Cliente implements Registro {
 
      @Override
      public void fromByteArray(byte[] b) throws IOException {
-          // TODO Auto-generated method stub
-          throw new UnsupportedOperationException("Unimplemented method 'fromByteArray'");
+          ByteArrayInputStream bais = new ByteArrayInputStream(b);
+          DataInputStream dis = new DataInputStream(bais);
+          this.id = dis.readInt();
+          this.nome = dis.readUTF();
+          this.dataNascimento = LocalDate.parse(dis.readUTF());
+          this.dataAdicao = LocalDate.parse(dis.readUTF());
+          int emailLength = dis.readInt();
+          this.email = new String[emailLength];
+          for (int i = 0; i < emailLength; i++) {
+               this.email[i] = dis.readUTF();
+          }
+          this.senha = dis.readUTF();
      }
 }
