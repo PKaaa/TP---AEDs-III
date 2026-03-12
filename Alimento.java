@@ -1,6 +1,4 @@
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class Alimento implements Registro {
      private int id;
@@ -60,7 +58,15 @@ public class Alimento implements Registro {
      }
 
      public void fromByteArray(byte[] b) throws IOException {
-          throw new UnsupportedOperationException ("Unimplemented method 'fromByteArray'");
+          ByteArrayInputStream bais = new ByteArrayInputStream(b);
+          DataInputStream dis = new DataInputStream(bais);
+
+          id = dis.readInt();
+          nome = dis.readUTF();
+          int categoriaLength = dis.readInt();
+          categoria = new String[categoriaLength];
+          for (int i = 0; i < categoriaLength; i++) {
+               categoria[i] = dis.readUTF();
+          }
      }
 }
-

@@ -2,7 +2,7 @@ import java.io.*;
 import java.lang.reflect.*;
 
 public class Arquivo <T extends Registro> {
-     private static final int TAM_REGISTRO = 4;
+     private static final int TAM_CABECALHO = 12;
      private RandomAccessFile arquivo;
      private String nomeArq;
      private Constructor<T> construtor;
@@ -18,9 +18,9 @@ public class Arquivo <T extends Registro> {
           this.construtor = construtor;
           this.arquivo = new RandomAccessFile (this.nomeArq, "rw");
 
-          if (arquivo.length() < TAM_REGISTRO) {
+          if (arquivo.length() < TAM_CABECALHO) {
                arquivo.writeInt(0); //ultimo id
-               arquivo.writeInt(-1); //lista excluida
+               arquivo.writeLong(-1); //lista excluida
           }
      }
 
@@ -51,7 +51,7 @@ public class Arquivo <T extends Registro> {
      }
 
      public T read (int id) throws Exception {
-          arquivo.seek (TAM_REGISTRO);
+          arquivo.seek (TAM_CABECALHO);
 
           while (arquivo.getFilePointer() < arquivo.length()) {
                byte lapide = arquivo.readByte();
@@ -71,7 +71,7 @@ public class Arquivo <T extends Registro> {
      }
 
      public T[] readAll() throws Exception {
-          arquivo.seek (TAM_REGISTRO);
+          arquivo.seek (TAM_CABECALHO);
           T[] array = (T[]) java.lang.reflect.Array.newInstance(construtor.getDeclaringClass(), 0);
           int count = 0;
 
@@ -92,7 +92,7 @@ public class Arquivo <T extends Registro> {
      }
      
      public boolean delete(int id) throws Exception {
-          arquivo.seek(TAM_REGISTRO);
+          arquivo.seek(TAM_CABECALHO);
           
           while (arquivo.getFilePointer() < arquivo.length()) {
                long posicao = arquivo.getFilePointer();
@@ -117,7 +117,7 @@ public class Arquivo <T extends Registro> {
      }
 
      public boolean update(T novoObj) throws Exception {
-          arquivo.seek(TAM_REGISTRO);
+          arquivo.seek(TAM_CABECALHO);
           
           while (arquivo.getFilePointer() < arquivo.length()) {
                long posicao = arquivo.getFilePointer();

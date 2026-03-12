@@ -1,6 +1,3 @@
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter; //nao eh usado nenhuma dessas bibliotecas POR ENQUANTO
-
 public class AlimentoDAO {
      private Arquivo <Alimento> arq;
 

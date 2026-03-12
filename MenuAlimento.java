@@ -15,16 +15,24 @@ public class MenuAlimento {
 
           do {
                System.out.println ("\n\nInicio > Alimentos");
-               System.out.println ("\n\n1 - Adicionar Alimento");
-               System.out.println ("\n\n2 - Buscar Alimento");
-               System.out.println ("\n\n3 - Alterar Alimento");
-               System.out.println ("\n\n4 - Excluir Alimento");
-               System.out.println ("\n\n0 - Voltar/Sair");
+               System.out.println ("\n1 - Adicionar Alimento");
+               System.out.println ("\n2 - Buscar Alimento");
+               System.out.println ("\n3 - Alterar Alimento");
+               System.out.println ("\n4 - Excluir Alimento");
+               System.out.println ("\n0 - Voltar/Sair");
+               System.out.println ("\nOpção: ");
 
                try {
-                    op = Integer.valueOf(console.nextInt());
+                    op = console.nextInt();
+                    console.nextLine();
+               } catch (InputMismatchException e) {
+                    console.nextLine();
+                    op = -1;
                } catch (NumberFormatException e) {
                     op = -1;//erro
+               } catch (Exception e) {
+                    console.nextLine();
+                    op = -1;
                }
 
                switch (op) {
@@ -106,10 +114,19 @@ public class MenuAlimento {
 
      private void incluirAlimento() throws Exception {
           System.out.println ("\n\nDigite o nome do alimento: ");
-          String nome = console.nextLine();
+          String nome = console.nextLine().trim();
           System.out.println ("\n\nDigite as categorias do alimento (separadamente por virgula): ");
-          String[] categorias = console.nextLine().split(",");
-          Alimento a = new Alimento(0, nome, categorias);
+          
+          String categoriasStr = console.nextLine();
+          String[] categoriasCruas = categoriasStr.split(",");
+          String[] categoriasLimpas = new String [categoriasCruas.length];
+
+          for (int i = 0; i < categoriasCruas.length; i++) {
+               categoriasLimpas[i] = categoriasCruas[i].trim();
+          }
+          
+          Alimento a = new Alimento(0, nome, categoriasLimpas);
+
           if (alimentoDAO.incluirAlimento(a)) {
                System.out.println ("\nAlimento incluido com sucesso!");
           } else {
@@ -153,5 +170,4 @@ public class MenuAlimento {
                System.out.println ("\nErro ao excluir alimento.");
           }
      }
-
 }
