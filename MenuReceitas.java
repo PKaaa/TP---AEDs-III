@@ -42,6 +42,9 @@ public class MenuReceitas {
                     case 4:
                          excluirReceita();
                          break;
+                    case 0:
+                              System.out.println("Saindo...");
+                              break;
                     default:
                          System.out.println ("\nOpção inválida!");
                          break;
@@ -224,3 +227,4 @@ public class MenuReceitas {
      }
 
 }
+
