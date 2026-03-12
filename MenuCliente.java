@@ -129,9 +129,11 @@ public class MenuCliente {
           console.nextLine();
 
           try {
-               Cliente c = clienteDAO.buscarCliente(id);
-               if (c == null) System.out.println("Cliente nao encontrado.");
-               return;
+                Cliente c = clienteDAO.buscarCliente(id);
+                if (c == null) {
+                    System.out.println("Cliente não encontrado.");
+                    return;
+               }
 
                System.out.print ("Tem certeza que deseja excluir o cliente " + c.getNome() + "? (S/N): ");
                char confirmar = console.nextLine().toUpperCase().charAt(0);
@@ -145,3 +147,4 @@ public class MenuCliente {
           }
      }
 }
+
