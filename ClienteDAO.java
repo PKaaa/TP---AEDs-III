@@ -10,8 +10,17 @@ public class ClienteDAO {
           return arq.create(c) > 0;
      }
 
-     public Cliente buscarCliente (int id) throws Exception {
+     public Cliente buscarClienteID (int id) throws Exception {
           return arq.read(id);
+     }
+
+     public Cliente buscarClienteNome (String nome) throws Exception {
+          for (Cliente c : arq.readAll()) {
+               if (c.getNome().equalsIgnoreCase(nome)) {
+                    return c;
+               }
+          }
+          return null;
      }
 
      public boolean alterarCliente (Cliente c) throws Exception {

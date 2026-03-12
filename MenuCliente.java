@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 import java.time.format.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class MenuCliente {
      private ClienteDAO clienteDAO;
@@ -49,20 +49,53 @@ public class MenuCliente {
      }
 
      private void buscarCliente() {
-          System.out.println ("\n\nDigite o ID do cliente: ");
-          int id = console.nextInt();
+          System.out.println ("\nDigite por qual meio voce gostaria de buscar o cliente:");
+          System.out.println ("\n1 - ID");
+          System.out.println ("\n2 - Nome");
+          System.out.println ("\nOpção: ");
+
+          int op = console.nextInt();
           console.nextLine();
 
-          try {
-               Cliente c = clienteDAO.buscarCliente(id); 
+          Cliente c;
 
-               if (c != null) {
-                    System.out.println (c);
-               } else {
-                    System.out.println("\nCliente nao encontrado.");
+          try {
+               switch (op) {
+                    case 1:
+                         System.out.println ("\nDigite o ID do cliente: ");
+                         int id = console.nextInt();
+                         console.nextLine();
+
+                         try {
+                              c = clienteDAO.buscarClienteID(id); 
+
+                              if (c != null) {
+                                   System.out.println (c);
+                              } else {
+                                   System.out.println("\nCliente nao encontrado.");
+                              }
+                         } catch (Exception e) {
+                              System.out.println ("\nErro ao buscar cliente.");
+                         }
+                         break;
+                    case 2:
+                         System.out.println ("\nDigite o nome do cliente: ");
+                         String nome = console.nextLine();
+                         c = clienteDAO.buscarClienteNome(nome);
+
+                         if (c != null) {
+                              System.out.println (c);
+                         } else {
+                              System.out.println ("\nCliente nao encontrado.");
+                         }
+                         break;
+                    default:
+                         System.out.println ("\nOpção inválida!");
+                         break;
                }
           } catch (Exception e) {
                System.out.println ("\nErro ao buscar cliente.");
+               e.getMessage();
           }
      }
 
@@ -94,7 +127,7 @@ public class MenuCliente {
           console.nextLine();
 
           try {
-               Cliente c = clienteDAO.buscarCliente(id);
+               Cliente c = clienteDAO.buscarClienteID(id);
 
                if (c == null) {
                     System.out.println("Cliente nao encontrado.");
@@ -134,7 +167,7 @@ public class MenuCliente {
           console.nextLine();
 
           try {
-               Cliente c = clienteDAO.buscarCliente(id);
+               Cliente c = clienteDAO.buscarClienteID(id);
                if (c == null) {
                     System.out.println("Cliente nao encontrado.");
                     return;
