@@ -48,6 +48,9 @@ public class MenuAlimento {
                     case 4:
                          excluirAlimento();
                          break;
+                     case 0:
+                         System.out.println("Saindo...");
+                         break;
                     default:
                          System.out.println ("\nOpção inválida!");
                          break;
@@ -170,4 +173,5 @@ public class MenuAlimento {
                System.out.println ("\nErro ao excluir alimento.");
           }
      }
+
 }
