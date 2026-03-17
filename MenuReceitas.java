@@ -132,87 +132,86 @@ public class MenuReceitas {
      }
 
      private void alterarReceita() throws Exception {
-          System.out.println ("\n\nDigite o que voce gostaria de alterar: ");
-          System.out.println ("\n1 - Titulo");
-          System.out.println ("\n2 - Informações");
-          System.out.println ("\n3 - Tempo de preparo");
-          System.out.println ("\n4 - Porção");
+
+          System.out.println("\n\nComo deseja buscar a receita?");
+          System.out.println("\n1 - ID");
+          System.out.println("\n2 - Título");
+          System.out.print("\nOpção: ");
+
+          int tipoBusca = console.nextInt();
+          console.nextLine();
+
+          Receita r = null;
+
+          switch (tipoBusca) {
+               case 1:
+                    System.out.println("\nDigite o ID da receita: ");
+                    int id = console.nextInt();
+                    console.nextLine();
+                    r = receitaDAO.buscarReceitaID(id);
+                    break;
+
+               case 2:
+                    System.out.println("\nDigite o título da receita: ");
+                    String nome = console.nextLine();
+                    r = receitaDAO.buscarReceitaTitulo(nome);
+                    break;
+
+               default:
+                    System.out.println("\nOpção inválida!");
+                    return;
+          }
+
+          if (r == null) {
+               System.out.println("\nReceita não encontrada.");
+               return;
+          }
+
+          System.out.println("\nReceita encontrada:");
+          System.out.println(r);
+
+          // Menu de alteração
+          System.out.println("\n\nO que deseja alterar?");
+          System.out.println("\n1 - Título");
+          System.out.println("\n2 - Informações");
+          System.out.println("\n3 - Tempo de preparo");
+          System.out.println("\n4 - Porção");
+          System.out.print("\nOpção: ");
+
           int op = console.nextInt();
           console.nextLine();
 
-          System.out.println ("\n\nDigite o ID da receita que voce gostaria de alterar: ");
-          int id = console.nextInt();
-          console.nextLine();
-          try {
-               switch (op) {
-                    case 1:
-                         System.out.println ("\n\nDigite o novo titulo da receita: ");
-                         String nome = console.nextLine();
-                         Receita r = receitaDAO.buscarReceitaID(id);
-                         if (r != null) {
-                              r.setTitulo(nome);
-                              if (receitaDAO.alterarReceita(r)) {
-                                   System.out.println ("\nReceita alterada com sucesso!");
-                              } else {
-                                   System.out.println ("\nErro ao alterar receita.");
-                              }
-                         } else {
-                              System.out.println("\nReceita nao encontrada.");
-                         }
-                         break;
-                    case 2:
-                         System.out.println ("\n\nDigite as novas informações da receita: ");
-                         String informacoes = console.nextLine();
-                         r = receitaDAO.buscarReceitaID(id);
-                         if (r != null) {
-                              r.setInformacoes(informacoes);
-                              if (receitaDAO.alterarReceita(r)) {
-                                   System.out.println ("\nReceita alterada com sucesso!");
-                              } else {
-                                   System.out.println ("\nErro ao alterar receita.");
-                              }
-                         } else {
-                              System.out.println("\nReceita nao encontrada.");
-                         }
-                         break;
-                    case 3:
-                         System.out.println ("\n\nDigite o novo tempo de preparo da receita (em minutos): ");
-                         int tempo = console.nextInt();
-                         console.nextLine();
-                         r = receitaDAO.buscarReceitaID(id);
-                         if (r != null) {
-                              r.setTempoPreparo(tempo);
-                              if (receitaDAO.alterarReceita(r)) {
-                                   System.out.println ("\nReceita alterada com sucesso!");
-                              } else {
-                                   System.out.println ("\nErro ao alterar receita.");
-                              }
-                         } else {
-                              System.out.println("\nReceita nao encontrada.");
-                         }
-                         break;
-                     case 4:
-                         System.out.println ("\n\nDigite a nova porção da receita: ");
-                         String porcao = console.nextLine();
+          switch (op) {
+               case 1:
+                    System.out.println("\nNovo título: ");
+                    r.setTitulo(console.nextLine());
+                    break;
 
-                         r = receitaDAO.buscarReceitaID(id);
-                         if (r != null) {
-                              r.setPorcao(porcao);
-                              if (receitaDAO.alterarReceita(r)) {
-                                   System.out.println ("\nReceita alterada com sucesso!");
-                              } else {
-                                   System.out.println ("\nErro ao alterar receita.");
-                              }
-                         } else {
-                              System.out.println("\nReceita nao encontrada.");
-                         }
-                         break;
-                    default:
-                         System.out.println ("\nOpção inválida!");
-                         break;
-               }
-          } catch (NumberFormatException e) {
-               System.out.println ("\nErro ao alterar receita.");
+               case 2:
+                    System.out.println("\nNovas informações: ");
+                    r.setInformacoes(console.nextLine());
+                    break;
+
+               case 3:
+                    System.out.println("\nNovo tempo (min): ");
+                    r.setTempoPreparo(console.nextInt());
+                    console.nextLine();
+                    break;
+
+               case 4:
+                    System.out.println("\nNova porção: ");
+                    r.setPorcao(console.nextLine());
+                    break;
+
+               default:
+                    System.out.println("\nOpção inválida!");
+                    return;
+          }
+
+          if (receitaDAO.alterarReceita(r)) {
+               System.out.println("\nReceita alterada com sucesso!");
+          } else {
+               System.out.println("\nErro ao alterar receita.");
           }
      }
 
