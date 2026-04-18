@@ -1,6 +1,11 @@
+package view;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import dao.AlimentoDAO;
+import model.Alimento;
 
 public class MenuAlimento {
      private AlimentoDAO alimentoDAO;

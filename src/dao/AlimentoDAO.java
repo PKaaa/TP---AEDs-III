@@ -1,3 +1,8 @@
+package dao;
+
+import model.Alimento;
+import util.Arquivo;
+
 public class AlimentoDAO {
      private Arquivo <Alimento> arq;
 
@@ -32,6 +37,10 @@ public class AlimentoDAO {
                }
           }
           return null;
+     }
+
+     public Alimento[] listarAlimentos() throws Exception {
+          return arq.readAll();
      }
 
      public boolean alterarAlimento (Alimento a) throws Exception {

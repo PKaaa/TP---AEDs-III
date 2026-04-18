@@ -1,6 +1,11 @@
+package view;
+
 import java.time.LocalDate;
 import java.time.format.*;
 import java.util.*;
+
+import dao.ClienteDAO;
+import model.Cliente;
 
 public class MenuCliente {
      private ClienteDAO clienteDAO;

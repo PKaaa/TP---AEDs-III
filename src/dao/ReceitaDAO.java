@@ -1,3 +1,8 @@
+package dao;
+
+import model.Receita;
+import util.Arquivo;
+
 public class ReceitaDAO {
      private Arquivo <Receita> arq;
 
@@ -29,6 +34,10 @@ public class ReceitaDAO {
                }
           }
           return null;
+     }
+
+     public Receita[] listarReceitas() throws Exception {
+          return arq.readAll();
      }
 
      public boolean alterarReceita (Receita r) throws Exception {

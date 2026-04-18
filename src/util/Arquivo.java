@@ -1,5 +1,9 @@
+package util;
+
 import java.io.*;
 import java.lang.reflect.*;
+
+import model.Registro;
 
 public class Arquivo <T extends Registro> {
      private static final int TAM_CABECALHO = 12;
