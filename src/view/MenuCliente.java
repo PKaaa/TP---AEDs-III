@@ -25,7 +25,7 @@ public class MenuCliente {
                System.out.println ("\n3 - Alterar Cliente.");
                System.out.println ("\n4 - Excluir Cliente.");
                System.out.println ("\n0 - Voltar/Sair.");
-               System.out.println ("\nOpção: ");
+               System.out.print ("\nOpção: ");
 
                try {
                     op = Integer.valueOf(console.nextLine());
@@ -60,7 +60,7 @@ public class MenuCliente {
           System.out.println ("\nDigite por qual meio voce gostaria de buscar o cliente:");
           System.out.println ("\n1 - ID");
           System.out.println ("\n2 - Nome");
-          System.out.println ("\nOpção: ");
+          System.out.print ("\nOpção: ");
 
           int op = console.nextInt();
           console.nextLine();
@@ -103,7 +103,7 @@ public class MenuCliente {
                }
           } catch (Exception e) {
                System.out.println ("\nErro ao buscar cliente.");
-               e.getMessage();
+               e.printStackTrace();
           }
      }
 
@@ -124,7 +124,7 @@ public class MenuCliente {
                System.out.println("\nFormato de data inválido.");
           } catch (Exception e) {
                System.out.println("\nErro ao incluir cliente.");
-               e.getMessage();
+               e.printStackTrace();
           }
      }
 
@@ -165,7 +165,7 @@ public class MenuCliente {
                else System.out.println("Erro ao alterar o cliente.");
           } catch (Exception e) {
                System.err.println ("Erro ao alterar o cliente");
-               e.getMessage();
+               e.printStackTrace();
           }
      }
 

@@ -10,6 +10,7 @@ public class Arquivo <T extends Registro> {
      private RandomAccessFile arquivo;
      private String nomeArq;
      private Constructor<T> construtor;
+     private Hash hashExt;
 
      public Arquivo (String nomeArq, Constructor<T> construtor) throws Exception {
           File diretorio = new File ("./dados");
@@ -26,6 +27,8 @@ public class Arquivo <T extends Registro> {
                arquivo.writeInt(0); //ultimo id
                arquivo.writeLong(-1); //lista excluida
           }
+
+          this.hashExt = new Hash(nomeArq);
      }
 
      public int create (T obj) throws Exception {
@@ -51,11 +54,13 @@ public class Arquivo <T extends Registro> {
                arquivo.write(dados);
           }
 
+          hashExt.create(obj.getId(), address);
+
           return obj.getId();
      }
 
      public T read (int id) throws Exception {
-          arquivo.seek (TAM_CABECALHO);
+          /*arquivo.seek (TAM_CABECALHO);
 
           while (arquivo.getFilePointer() < arquivo.length()) {
                byte lapide = arquivo.readByte();
@@ -71,7 +76,24 @@ public class Arquivo <T extends Registro> {
                     }
                }
           }
-          return null;
+          return null;*/
+
+          long address = hashExt.read(id);
+          System.out.println("[DEBUG read] id=" + id + " address=" + address);
+          if (address == -1) return null; //indice nao encontrado
+
+          arquivo.seek(address);
+          byte lapide = arquivo.readByte();
+          if (lapide != ' ') return null; //registro ja excluido
+
+          short tamanho = arquivo.readShort();
+          byte[] dados = new byte[tamanho];
+          arquivo.readFully(dados);
+
+          T obj = construtor.newInstance();
+          obj.fromByteArray(dados);
+
+          return obj;
      }
 
      public T[] readAll() throws Exception {
@@ -96,7 +118,7 @@ public class Arquivo <T extends Registro> {
      }
      
      public boolean delete(int id) throws Exception {
-          arquivo.seek(TAM_CABECALHO);
+          /*arquivo.seek(TAM_CABECALHO);
           
           while (arquivo.getFilePointer() < arquivo.length()) {
                long posicao = arquivo.getFilePointer();
@@ -117,54 +139,67 @@ public class Arquivo <T extends Registro> {
                     }
                }
           }
-          return false;
+          return false;*/
+
+          long pos = hashExt.read(id);
+          if (pos == -1) return false;
+
+          arquivo.seek(pos);
+          arquivo.writeByte('*'); //marca como excluido no arquivo de dados
+          short tamanho = arquivo.readShort();
+
+          addDeleted(tamanho, pos);
+
+          hashExt.delete(id);
+
+          return true;
      }
 
      public boolean update(T novoObj) throws Exception {
-          arquivo.seek(TAM_CABECALHO);
-          
-          while (arquivo.getFilePointer() < arquivo.length()) {
-               long posicao = arquivo.getFilePointer();
-               byte lapide = arquivo.readByte();
-               short tamanho = arquivo.readShort();
-               byte[] dados = new byte[tamanho];
-               arquivo.read(dados);
+          long pos = hashExt.read(novoObj.getId());
+          System.out.println("[DEBUG update] id=" + novoObj.getId() + " pos=" + pos);
+          if (pos == -1) return false;
 
-               if (lapide == ' ') {
-                    T obj = construtor.newInstance();
-                    obj.fromByteArray(dados);
+          arquivo.seek(pos); 
+          byte lapide = arquivo.readByte();
+          System.out.println("[DEBUG update] lapide=" + (char)lapide);
+          if (lapide != ' ') return false;
 
-                    if (obj.getId() == novoObj.getId()) {
-                         byte[] novosDados = novoObj.toByteArray();
-                         short novoTam = (short) novosDados.length;
-                         if (novoTam <= tamanho) {
-                              arquivo.seek(posicao + 3);
-                              arquivo.write(novosDados);
-                         } else {
-                              arquivo.seek(posicao);
-                              arquivo.writeByte('*');
-                              addDeleted(tamanho, posicao);
-                              long novoEndereco = getDeleted(novosDados.length);
+          short tamanho = arquivo.readShort();
+          byte[] novosDados = novoObj.toByteArray();
+          short novoTam = (short) novosDados.length;
+          System.out.println("[DEBUG update] tamanho=" + tamanho + " novoTam=" + novoTam);
 
-                              if (novoEndereco == -1) {
-                                   arquivo.seek(arquivo.length());
-                                   novoEndereco = arquivo.getFilePointer();
-                                   arquivo.writeByte(' ');
-                                   arquivo.writeShort(novoTam);
-                                   arquivo.write(novosDados);
-                              } else {
-                                   arquivo.seek(novoEndereco);
-                                   arquivo.writeByte(' ');
-                                   arquivo.skipBytes(2);
-                                   arquivo.write(novosDados);
-                              }
-                         }
-                         return true;
-                    }
+          if (novoTam <= tamanho) {
+               arquivo.seek(pos + 1);       // pos+1 = onde fica o short de tamanho
+               arquivo.writeShort(novoTam); // agora sim atualiza o tamanho
+               arquivo.write(novosDados);   // escreve os dados logo em seguida (pos+3)
+
+               int restante = tamanho - novoTam;
+               if (restante > 0) arquivo.write(new byte[restante]);
+          } else { //senao, move o registro para outro local
+               arquivo.seek(pos);
+               arquivo.writeByte('*');
+               addDeleted(tamanho, pos);
+               long enderecNovo = getDeleted(novosDados.length);
+
+               if (enderecNovo == -1) {
+                    arquivo.seek(arquivo.length());
+                    enderecNovo = arquivo.getFilePointer();
+                    arquivo.writeByte(' ');
+                    arquivo.writeShort(novoTam);
+                    arquivo.write(novosDados);
+               } else {
+                    arquivo.seek(enderecNovo);
+                    arquivo.writeByte(' ');
+                    arquivo.writeShort(novoTam);
+                    arquivo.write(novosDados);
                }
+
+               hashExt.update(novoObj.getId(), enderecNovo);
           }
 
-          return false;
+          return true;
      }
 
      private void addDeleted(int tamanhoEspaco, long enderecoEspaco) throws Exception {
@@ -176,13 +211,16 @@ public class Arquivo <T extends Registro> {
           if (endereco == -1) {
                arquivo.seek(4);
                arquivo.writeLong(enderecoEspaco);
-               arquivo.seek(enderecoEspaco + 3);
-               arquivo.writeLong(-1);
+               if (tamanhoEspaco >= 8) {
+                    arquivo.seek(enderecoEspaco + 3);
+                    arquivo.writeLong(-1);
+               }
           } else {
                do {
                     arquivo.seek(endereco + 1);
                     int tamanho = arquivo.readShort();
-                    proximo = arquivo.readLong();
+                    if (tamanho >= 8) proximo = arquivo.readLong();
+                    else proximo = -1;
                          
                     if (tamanho > tamanhoEspaco) {
                          if (posicao == 4)
@@ -219,9 +257,14 @@ public class Arquivo <T extends Registro> {
           while (endereco != -1) {
                arquivo.seek(endereco + 1);
                tamanho = arquivo.readShort();
-               proximo = arquivo.readLong();
+               
+               if (tamanho >= 8) {
+                    proximo = arquivo.readLong();
+               } else {
+                    proximo = -1;
+               }
 
-               if (tamanho > tamanhoNecessario) {
+               if (tamanho >= tamanhoNecessario) {
                     if (posicao == 4)
                          arquivo.seek(posicao);
                     else
@@ -239,5 +282,6 @@ public class Arquivo <T extends Registro> {
 
      public void close() throws Exception {
           arquivo.close();
+          hashExt.close();
      }
 }
