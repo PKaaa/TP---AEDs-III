@@ -79,7 +79,6 @@ public class Arquivo <T extends Registro> {
           return null;*/
 
           long address = hashExt.read(id);
-          System.out.println("[DEBUG read] id=" + id + " address=" + address);
           if (address == -1) return null; //indice nao encontrado
 
           arquivo.seek(address);
@@ -157,18 +156,15 @@ public class Arquivo <T extends Registro> {
 
      public boolean update(T novoObj) throws Exception {
           long pos = hashExt.read(novoObj.getId());
-          System.out.println("[DEBUG update] id=" + novoObj.getId() + " pos=" + pos);
           if (pos == -1) return false;
 
           arquivo.seek(pos); 
           byte lapide = arquivo.readByte();
-          System.out.println("[DEBUG update] lapide=" + (char)lapide);
           if (lapide != ' ') return false;
 
           short tamanho = arquivo.readShort();
           byte[] novosDados = novoObj.toByteArray();
           short novoTam = (short) novosDados.length;
-          System.out.println("[DEBUG update] tamanho=" + tamanho + " novoTam=" + novoTam);
 
           if (novoTam <= tamanho) {
                arquivo.seek(pos + 1);       // pos+1 = onde fica o short de tamanho
