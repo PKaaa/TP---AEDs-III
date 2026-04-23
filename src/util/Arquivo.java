@@ -96,24 +96,37 @@ public class Arquivo <T extends Registro> {
      }
 
      public T[] readAll() throws Exception {
-          arquivo.seek (TAM_CABECALHO);
-          T[] array = (T[]) java.lang.reflect.Array.newInstance(construtor.getDeclaringClass(), 0);
-          int count = 0;
+     arquivo.seek(TAM_CABECALHO);
+     T[] array = (T[]) java.lang.reflect.Array.newInstance(construtor.getDeclaringClass(), 0);
+     int count = 0;
 
-          while (arquivo.getFilePointer() < arquivo.length()) {
-               byte lapide = arquivo.readByte();
-               short tamanho = arquivo.readShort();
-               byte[] dados = new byte[tamanho];
-               arquivo.readFully(dados);
+     while (arquivo.getFilePointer() < arquivo.length()) {
 
-               if (lapide == ' ') {
-                    T obj = construtor.newInstance();
-                    obj.fromByteArray(dados);
-                    array = java.util.Arrays.copyOf(array, count + 1);
-                    array[count++] = obj;
-               }
+          long pos = arquivo.getFilePointer();
+
+          // evita ler além do arquivo
+          if (pos + 3 > arquivo.length()) break;
+
+          byte lapide = arquivo.readByte();
+          short tamanho = arquivo.readShort();
+
+          if (tamanho <= 0 || pos + 3 + tamanho > arquivo.length()) {
+               break; // para leitura pra evitar EOF
           }
-          return array;
+
+          byte[] dados = new byte[tamanho];
+          arquivo.readFully(dados);
+
+          if (lapide == ' ') {
+               T obj = construtor.newInstance();
+               obj.fromByteArray(dados);
+
+               array = java.util.Arrays.copyOf(array, count + 1);
+               array[count++] = obj;
+          }
+     }
+
+     return array;
      }
      
      public boolean delete(int id) throws Exception {
@@ -144,7 +157,9 @@ public class Arquivo <T extends Registro> {
           if (pos == -1) return false;
 
           arquivo.seek(pos);
-          arquivo.writeByte('*'); //marca como excluido no arquivo de dados
+          arquivo.writeByte('*');
+
+          arquivo.seek(pos + 1);
           short tamanho = arquivo.readShort();
 
           addDeleted(tamanho, pos);
