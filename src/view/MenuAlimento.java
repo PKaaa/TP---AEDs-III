@@ -99,15 +99,18 @@ public class MenuAlimento {
                          }
                          break;
 
-                    case 3:
-                         System.out.println ("\n\nDigite a categoria do alimento: ");
+                         case 3:
+                         System.out.println("\n\nDigite a categoria do alimento: ");
                          String categoria = console.nextLine();
-                         a = alimentoDAO.buscarAlimentoCategoria(categoria);
 
-                         if (a != null) {
-                              System.out.println (a);
+                         ArrayList<Alimento> lista = alimentoDAO.buscarAlimentoCategoria(categoria);
+
+                         if (!lista.isEmpty()) {
+                              for (Alimento alimento : lista) {
+                                   System.out.println(alimento);
+                              }
                          } else {
-                              System.out.println ("\nAlimento nao encontrado.");
+                              System.out.println("\nAlimento nao encontrado.");
                          }
                          break;
 
@@ -153,9 +156,15 @@ public class MenuAlimento {
                System.out.println ("\n\nDigite o nome do alimento: ");
                String nome = console.nextLine();
                System.out.println ("\n\nDigite as categorias do alimento (separadamente por virgula): ");
-               String[] categorias = console.nextLine().split(",");
+               String[] categoriasCruas = console.nextLine().split(",");
                a.setNome(nome);
-               a.setCategoria(categorias);
+               String[] categoriasLimpas = new String[categoriasCruas.length];
+               
+               for (int i = 0; i < categoriasCruas.length; i++) {
+                    categoriasLimpas[i] = categoriasCruas[i].trim();
+               }
+               
+               a.setCategoria(categoriasLimpas);
 
                if (alimentoDAO.alterarAlimento(a)) {
                     System.out.println ("\nAlimento alterado com sucesso!");
