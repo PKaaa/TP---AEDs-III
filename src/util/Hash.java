@@ -26,7 +26,6 @@ public class Hash {
         }
     }
 
-    ///////////////////////////////////////
     //Métodos
 
     public boolean create (int id, long endereco) throws Exception { 
@@ -100,7 +99,6 @@ public class Hash {
         arqBucket.close();
     }
 
-    //////////////////////////////////////////
     //Lógica interna
 
     private int hash(int chave, int p) throws Exception {
@@ -151,7 +149,6 @@ public class Hash {
     }
     
 
-    /////////////////////////////////////////////////
     private void split (long indexBucket, Bucket bk, int chaveNova, long enderecNovo) throws Exception {
         int profGlobal = lerProfGlobal();
 
@@ -203,7 +200,7 @@ public class Hash {
         }
 
         escreverBucket(indexBucket, profLocalNovo, chavesOrig, endsOrig, qtdOrig);
-        escreverBucket(indexNovo, profLocalNovo, chaves, enderecos, qtdNovo);
+        escreverBucket(indexNovo, profLocalNovo, chavesNovo, endsNovo, qtdNovo);
 
         if (qtdOrig == capacidade + 1 || qtdNovo == capacidade + 1) { //se um dos buckets ainda estiver cheio e ainda ter recebido todas as chaves, tenta recursivamente (só por segurança)
             delete(chaveNova);
@@ -250,7 +247,6 @@ public class Hash {
         return index;
     }
 
-    ///////////////////////////////////////////
     //Classe auxiliar 
     class Bucket {
         int profundidadeLocal = 0;
