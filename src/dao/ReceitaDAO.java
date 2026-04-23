@@ -36,6 +36,10 @@ public class ReceitaDAO {
           return null;
      }
 
+     public Receita[] listarReceitas() throws Exception {
+          return arq.readAll();
+     }
+
      public boolean alterarReceita (Receita r) throws Exception {
           return arq.update(r);
      }

@@ -95,32 +95,19 @@ public class Arquivo <T extends Registro> {
           return obj;
      }
 
+     @SuppressWarnings("unchecked")
      public T[] readAll() throws Exception {
-     arquivo.seek(TAM_CABECALHO);
+     arquivo.seek(0);
+     int ultimoId = arquivo.readInt();
+
      T[] array = (T[]) java.lang.reflect.Array.newInstance(construtor.getDeclaringClass(), 0);
      int count = 0;
 
-     while (arquivo.getFilePointer() < arquivo.length()) {
-
-          long pos = arquivo.getFilePointer();
-
-          // evita ler além do arquivo
-          if (pos + 3 > arquivo.length()) break;
-
-          byte lapide = arquivo.readByte();
-          short tamanho = arquivo.readShort();
-
-          if (tamanho <= 0 || pos + 3 + tamanho > arquivo.length()) {
-               break; // para leitura pra evitar EOF
-          }
-
-          byte[] dados = new byte[tamanho];
-          arquivo.readFully(dados);
-
-          if (lapide == ' ') {
-               T obj = construtor.newInstance();
-               obj.fromByteArray(dados);
-
+     // Lista via índice hash para não depender de varredura sequencial do arquivo.
+     // Isso mantém a listagem consistente mesmo se houver blocos antigos inconsistentes.
+     for (int id = 1; id <= ultimoId; id++) {
+          T obj = read(id);
+          if (obj != null) {
                array = java.util.Arrays.copyOf(array, count + 1);
                array[count++] = obj;
           }
