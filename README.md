@@ -24,37 +24,19 @@ Sistema de gerenciamento com cadastro de clientes, alimentos e receitas, com API
 
 ## Como rodar o projeto
 
-1. **Abra o VS Code na pasta raiz do projeto**
+O arquivo `run.sh` já vem junto com o projeto. Basta executar estes passos na raiz do repositório:
 
-2. **Crie um novo arquivo chamado `run.sh`**
-
-3. **Cole o conteúdo:**
-```bash
-#!/bin/bash
-
-echo "Compilando..."
-javac -cp "lib/*" -d out $(find src -name "*.java")
-
-echo "Iniciando servidor Java..."
-java -cp "out:lib/*" controller.Servidor &
-
-echo "Iniciando frontend..."
-cd frontend && npx serve .
-```
-
-4. **Salve o arquivo**
-
-5. **Abra o terminal na raiz do projeto e rode uma única vez:**
+1. Dê permissão de execução ao script, uma única vez:
 ```bash
 chmod +x run.sh
 ```
 
-6. **Daí em diante, para rodar o projeto inteiro é só:**
+2. Para iniciar o projeto completo, rode:
 ```bash
 ./run.sh
 ```
 
-O backend iniciará em http://localhost:7777 e o frontend em http://localhost:3000 (ou a porta exibida pelo `serve`).
+O backend sobe em `http://localhost:7777` e o frontend abre na porta exibida pelo `serve`.
 
 ## Carga de dados para testes (seed)
 O script cria clientes, alimentos e receitas automaticamente via API.
