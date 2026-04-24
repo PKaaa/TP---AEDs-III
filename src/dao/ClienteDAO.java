@@ -28,6 +28,10 @@ public class ClienteDAO {
           return null;
      }
 
+     public Cliente[] listarClientes() throws Exception {
+          return arq.readAll();
+     }
+
      public boolean alterarCliente (Cliente c) throws Exception {
           return arq.update(c);
      }

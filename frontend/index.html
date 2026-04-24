@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NutriChef</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+ 
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">
+        <h1>Nutri<span>Chef</span></h1>
+        <p>Sistema de Gestão Culinária</p>
+      </div>
+
+      <div class="login-switch">
+        <button id="sw-login" class="login-switch-btn active" onclick="showLoginMode()">Entrar</button>
+        <button id="sw-register" class="login-switch-btn" onclick="showRegisterMode()">Cadastrar</button>
+      </div>
+
+      <div id="login-form">
+        <div id="login-err" class="login-err"></div>
+        <div class="fg">
+          <label>E-mail</label>
+          <input id="l-email" type="email" class="fi" placeholder="seu@email.com">
+        </div>
+        <div class="fg">
+          <label>Senha</label>
+          <input id="l-senha" type="password" class="fi" placeholder="••••••••">
+        </div>
+        <button
+          class="btn btn-primary"
+          style="width:100%;justify-content:center;margin-top:8px"
+          onclick="doLogin()"
+        >
+          Entrar
+        </button>
+        <button class="login-link" onclick="showForgotMode()">Esqueceu a senha?</button>
+      </div>
+
+      <div id="register-form" class="hidden-auth">
+        <div id="register-err" class="login-err"></div>
+        <div class="fg">
+          <label>Nome</label>
+          <input id="r-nome" type="text" class="fi" placeholder="Seu nome completo">
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Data de nascimento</label>
+            <input id="r-nasc" type="date" class="fi">
+          </div>
+          <div class="fg">
+            <label>E-mail</label>
+            <input id="r-email" type="email" class="fi" placeholder="seu@email.com">
+          </div>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Senha</label>
+            <input id="r-senha" type="password" class="fi" placeholder="••••••••">
+          </div>
+          <div class="fg">
+            <label>Confirmar senha</label>
+            <input id="r-senha2" type="password" class="fi" placeholder="••••••••">
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          style="width:100%;justify-content:center;margin-top:8px"
+          onclick="doRegister()"
+        >
+          Criar conta
+        </button>
+        <button class="login-link" onclick="showLoginMode()">Voltar para login</button>
+      </div>
+
+      <div id="forgot-form" class="hidden-auth">
+        <div id="forgot-err" class="login-err"></div>
+        <div class="fg">
+          <label>E-mail da conta</label>
+          <input id="f-email" type="email" class="fi" placeholder="seu@email.com">
+        </div>
+        <button
+          class="btn btn-ghost"
+          style="width:100%;justify-content:center;margin-top:-4px;margin-bottom:14px"
+          onclick="sendResetCode()"
+        >
+          Enviar código para e-mail
+        </button>
+        <div class="fg">
+          <label>Código de verificação</label>
+          <input id="f-codigo" type="text" class="fi" placeholder="Digite o código de 6 dígitos">
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Nova senha</label>
+            <input id="f-senha" type="password" class="fi" placeholder="••••••••">
+          </div>
+          <div class="fg">
+            <label>Confirmar nova senha</label>
+            <input id="f-senha2" type="password" class="fi" placeholder="••••••••">
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          style="width:100%;justify-content:center;margin-top:8px"
+          onclick="doForgotPassword()"
+        >
+          Atualizar senha
+        </button>
+        <button class="login-link" onclick="showLoginMode()">Voltar para login</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- APP PRINCIPAL -->
+  <div id="app">
+ 
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Recolher/expandir sidebar" title="Recolher/expandir sidebar">⟨</button>
+      <div class="sb-brand">
+        <div class="sb-brand-logo">Nutri<span>Chef</span></div>
+        <div class="sb-brand-sub">AEDs III — Fase 2</div>
+      </div>
+ 
+      <div class="sb-chef">
+        <div class="sb-chef-avatar">👨‍🍳</div>
+        <div>
+          <div class="sb-chef-name" id="chef-nome">Chef Admin</div>
+          <div class="sb-chef-role">Administrador</div>
+        </div>
+      </div>
+ 
+      <nav>
+        <div class="nav-section"><span>Principal</span></div>
+        <div class="nav-item active" data-page="dashboard" onclick="goPage('dashboard')">
+          <span class="nav-ico">🏠</span><span class="nav-label">Dashboard</span>
+        </div>
+        <div class="nav-section"><span>Cadastros</span></div>
+        <div class="nav-item" data-page="clientes" onclick="goPage('clientes')">
+          <span class="nav-ico">👥</span><span class="nav-label">Clientes</span>
+        </div>
+        <div class="nav-item" data-page="alimentos" onclick="goPage('alimentos')">
+          <span class="nav-ico">🥦</span><span class="nav-label">Alimentos</span>
+        </div>
+        <div class="nav-item" data-page="receitas" onclick="goPage('receitas')">
+          <span class="nav-ico">📋</span><span class="nav-label">Receitas</span>
+        </div>
+      </nav>
+ 
+      <div class="sb-footer">
+        <button class="btn-logout" onclick="doLogout()"><span class="btn-ico">↩</span><span class="btn-text">Sair</span></button>
+      </div>
+    </aside>
+ 
+    <!-- MAIN -->
+    <main id="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title" id="page-title">Dashboard</div>
+          <div class="topbar-sub"  id="page-sub">Visão geral do sistema</div>
+        </div>
+        <div id="topbar-action"></div>
+      </div>
+      <div class="content" id="content"></div>
+    </main>
+ 
+  </div>
+ 
+  <!-- MODAL -->
+  <div class="overlay" id="overlay" onclick="overlayClick(event)">
+    <div class="modal">
+      <div class="modal-hd">
+        <span class="modal-title" id="modal-title"></span>
+        <button class="modal-x" onclick="closeModal()">✕</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+ 
+  <!-- TOASTS -->
+  <div id="toasts"></div>
+ 
+  <script src="js/scripts.js"></script>
+</body>
+</html>

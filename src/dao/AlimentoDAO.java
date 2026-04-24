@@ -53,6 +53,10 @@ public class AlimentoDAO {
         return lista;
     }
 
+    public Alimento[] listarAlimentos() throws Exception {
+        return arq.readAll();
+    }
+
     public boolean alterarAlimento(Alimento a) throws Exception {
         return arq.update(a);
     }
