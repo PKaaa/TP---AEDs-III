@@ -22,37 +22,39 @@ Sistema de gerenciamento com cadastro de clientes, alimentos e receitas, com API
 - curl
 - Navegador
 
-## Como compilar o backend
-Execute na raiz do projeto:
+## Como rodar o projeto
 
+1. **Abra o VS Code na pasta raiz do projeto**
+
+2. **Crie um novo arquivo chamado `run.sh`**
+
+3. **Cole o conteúdo:**
 ```bash
-cd /home/.../.../.../TP---AEDs-III
+#!/bin/bash
+
+echo "Compilando..."
 javac -cp "lib/*" -d out $(find src -name "*.java")
+
+echo "Iniciando servidor Java..."
+java -cp "out:lib/*" controller.Servidor &
+
+echo "Iniciando frontend..."
+cd frontend && npx serve .
 ```
 
-## Como executar o backend
+4. **Salve o arquivo**
 
+5. **Abra o terminal na raiz do projeto e rode uma única vez:**
 ```bash
-cd /home/.../.../.../TP---AEDs-III
-javac -cp "lib/*" -d out $(find src -name "*.java")
-java -cp "out:lib/*" controller.Servidor
+chmod +x run.sh
 ```
 
-API em: http://localhost:7777
-
-## Como executar o frontend
-Opcao recomendada:
-
+6. **Daí em diante, para rodar o projeto inteiro é só:**
 ```bash
-cd /home/.../.../..../TP---AEDs-III/frontend
-npx serve .
+./run.sh
 ```
 
-Depois, acessar a URL exibida no terminal pelo `serve`.
-
-Opcao alternativa:
-
-- abrir [frontend/index.html](frontend/index.html) diretamente no navegador.
+O backend iniciará em http://localhost:7777 e o frontend em http://localhost:3000 (ou a porta exibida pelo `serve`).
 
 ## Carga de dados para testes (seed)
 O script cria clientes, alimentos e receitas automaticamente via API.

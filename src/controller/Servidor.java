@@ -23,26 +23,6 @@ import java.security.SecureRandom;
 
 import static spark.Spark.*;
 
-/**
- * Servidor HTTP - NutriChef
- * Expõe os DAOs do projeto como API REST via Spark Java.
- *
- * DEPENDÊNCIA: adicione ao pom.xml (ou classpath):
- * <dependency>
- * <groupId>com.sparkjava</groupId>
- * <artifactId>spark-core</artifactId>
- * <version>2.9.4</version>
- * </dependency>
- * <dependency>
- * <groupId>com.google.code.gson</groupId>
- * <artifactId>gson</artifactId>
- * <version>2.10.1</version>
- * </dependency>
- *
- * Para compilar e rodar junto com o projeto:
- * javac -cp spark-core-2.9.4.jar:gson-2.10.1.jar:. Servidor.java *.java
- * java -cp spark-core-2.9.4.jar:gson-2.10.1.jar:. Servidor
- */
 public class Servidor {
 
     private static final int PORTA = 7777;
@@ -58,11 +38,12 @@ public class Servidor {
                     (JsonDeserializer<LocalDate>) (json, t, ctx) -> LocalDate.parse(json.getAsString(),
                             DateTimeFormatter.ISO_LOCAL_DATE))
             .serializeNulls()
+            .disableHtmlEscaping()
             .create();
 
     public static void main(String[] args) throws Exception {
 
-        // ── DAOs
+        // DAOs
         ClienteDAO clienteDAO = new ClienteDAO();
         AlimentoDAO alimentoDAO = new AlimentoDAO();
         ReceitaDAO receitaDAO = new ReceitaDAO();
@@ -70,8 +51,10 @@ public class Servidor {
         // Configuração do Spark
         port(PORTA);
 
-        // CORS — permite o frontend (aberto como arquivo) chamar a API
+        // Força encoding UTF-8 em todas as requisições e respostas
         before((req, res) -> {
+            req.attribute("charset", "UTF-8");
+            res.type("application/json; charset=UTF-8");
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
             res.header("Access-Control-Allow-Headers", "Content-Type");
@@ -310,17 +293,21 @@ public class Servidor {
             }
         });
 
-        get("/alimentos/:id", (req, res) -> {
+        put("/alimentos/:id", (req, res) -> {
             res.type("application/json");
             try {
                 int id = Integer.parseInt(req.params(":id"));
-                Alimento a = alimentoDAO.buscarAlimentoID(id);
-                if (a != null)
-                    return gson.toJson(a);
+                Alimento a = gson.fromJson(req.body(), Alimento.class);
+                a.setId(id);
+                if (a.getCategoria() == null)
+                    a.setCategoria(new String[0]);
+                boolean ok = alimentoDAO.alterarAlimento(a);
+                if (ok)
+                    return ok("Alimento atualizado");
                 res.status(404);
                 return erro("Alimento não encontrado");
             } catch (Exception e) {
-                res.status(500);
+                res.status(400);
                 return erro(e.getMessage());
             }
         });
@@ -358,6 +345,8 @@ public class Servidor {
             res.type("application/json");
             try {
                 Alimento a = gson.fromJson(req.body(), Alimento.class);
+                if (a.getCategoria() == null)
+                    a.setCategoria(new String[0]);
                 boolean ok = alimentoDAO.incluirAlimento(a);
                 if (ok) {
                     res.status(201);
