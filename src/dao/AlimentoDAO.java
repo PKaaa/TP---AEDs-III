@@ -57,6 +57,11 @@ public class AlimentoDAO {
         return arq.readAll();
     }
 
+    //listagem a partir do ID usando a arvore B
+    public Alimento[] listarAlimentosOrdenados() throws Exception {
+        return arq.readAllArvB();
+    }
+
     public boolean alterarAlimento(Alimento a) throws Exception {
         return arq.update(a);
     }

@@ -20,10 +20,11 @@ public class MenuAlimento {
 
           do {
                System.out.println ("\n\nInicio > Alimentos");
-               System.out.println ("\n1 - Adicionar Alimento");
+               System.out.println ("\n\n1 - Adicionar Alimento");
                System.out.println ("\n2 - Buscar Alimento");
                System.out.println ("\n3 - Alterar Alimento");
                System.out.println ("\n4 - Excluir Alimento");
+               System.out.println("\n5 - Listar Alimentos");
                System.out.println ("\n0 - Voltar/Sair");
                System.out.println ("\nOpção: ");
 
@@ -52,6 +53,9 @@ public class MenuAlimento {
                          break;
                     case 4:
                          excluirAlimento();
+                         break;
+                    case 5:
+                         listarAlimentos();
                          break;
                      case 0:
                          System.out.println("Saindo...");
@@ -188,4 +192,17 @@ public class MenuAlimento {
           }
      }
 
+     private void listarAlimentos() throws Exception {
+          try {
+               Alimento[] alimentos = alimentoDAO.listarAlimentos();
+               if (alimentos.length == 0) System.out.println("\nNenhum alimento cadastrado/encontrado.");
+
+               System.out.println("\nAlimentos ordenados pelo ID:");
+               for (Alimento a : alimentos) System.out.println(a);
+               System.out.println("\nTotal de " + alimentos.length + " alimento(s) encontrados.");
+          } catch (Exception e) {
+               System.err.println("Erro ao listar alimentos." + e.getMessage());
+               e.printStackTrace();
+          }
+     }
 }

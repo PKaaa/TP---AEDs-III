@@ -21,10 +21,11 @@ public class MenuReceitas {
           do {
                System.out.println ("\n\nInicio > Receitas");
                System.out.println ("\n\n1 - Adicionar Receita");
-               System.out.println ("\n\n2- Buscar Receita");
-               System.out.println ("\n\n3 - Alterar Receita");
-               System.out.println ("\n\n4 - Excluir Receita");
-               System.out.println ("\n\n0 - Voltar/Sair");
+               System.out.println ("\n2- Buscar Receita");
+               System.out.println ("\n3 - Alterar Receita");
+               System.out.println ("\n4 - Excluir Receita");
+               System.out.println ("\n5 - Listar Receitas");
+               System.out.println ("\n0 - Voltar/Sair");
                System.out.print("\nOpção: ");
 
                try {
@@ -48,9 +49,12 @@ public class MenuReceitas {
                     case 4:
                          excluirReceita();
                          break;
+                    case 5:
+                         listarReceitas();
+                         break;
                     case 0:
-                              System.out.println("Saindo...");
-                              break;
+                         System.out.println("Saindo...");
+                         break;
                     default:
                          System.out.println ("\nOpção inválida!");
                          break;
@@ -231,6 +235,19 @@ public class MenuReceitas {
           }
      }
 
+     private void listarReceitas() throws Exception {
+          try {
+               Receita[] receitas = receitaDAO.listarReceitas();
+               if (receitas.length == 0) System.out.println("\nNenhuma receita cadastrada/encontrada.");
+
+               System.out.println("\nReceitas ordenadas pelo ID: ");
+               for (Receita r : receitas) System.out.println(r);
+               System.out.println("\nTotal de " + receitas.length + " receita(s) encontrada(s).");
+          } catch (Exception e) {
+               System.err.println("Erro ao listar as receitas.");
+               e.printStackTrace();
+          }
+     }
 }
 
 

@@ -2,6 +2,7 @@ package util;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.Arrays;
 
 import model.Registro;
 
@@ -11,6 +12,7 @@ public class Arquivo <T extends Registro> {
      private String nomeArq;
      private Constructor<T> construtor;
      private Hash hashExt;
+     private ArvoreB arvB;
 
      public Arquivo (String nomeArq, Constructor<T> construtor) throws Exception {
           File diretorio = new File ("./dados");
@@ -29,6 +31,7 @@ public class Arquivo <T extends Registro> {
           }
 
           this.hashExt = new Hash(nomeArq);
+          this.arvB = new ArvoreB(nomeArq);
      }
 
      public int create (T obj) throws Exception {
@@ -55,35 +58,19 @@ public class Arquivo <T extends Registro> {
           }
 
           hashExt.create(obj.getId(), address);
+          arvB.create(obj.getId(), address);
 
           return obj.getId();
      }
 
      public T read (int id) throws Exception {
-          /*arquivo.seek (TAM_CABECALHO);
-
-          while (arquivo.getFilePointer() < arquivo.length()) {
-               byte lapide = arquivo.readByte();
-               short tamanho = arquivo.readShort();
-               byte[] dados = new byte[tamanho];
-               arquivo.readFully(dados);
-
-               if (lapide == ' ') {
-                    T obj = construtor.newInstance();
-                    obj.fromByteArray(dados);
-                    if (obj.getId() == id) {
-                         return obj;
-                    }
-               }
-          }
-          return null;*/
-
           long address = hashExt.read(id);
+          
           if (address == -1) return null; //indice nao encontrado
 
           arquivo.seek(address);
           byte lapide = arquivo.readByte();
-          if (lapide != ' ') return null; //registro ja excluido
+          if (lapide != ' ') return null;
 
           short tamanho = arquivo.readShort();
           byte[] dados = new byte[tamanho];
@@ -96,11 +83,13 @@ public class Arquivo <T extends Registro> {
      }
 
      @SuppressWarnings("unchecked")
+
+     //readAll hash
      public T[] readAll() throws Exception {
      arquivo.seek(0);
      int ultimoId = arquivo.readInt();
 
-     T[] array = (T[]) java.lang.reflect.Array.newInstance(construtor.getDeclaringClass(), 0);
+     T[] array = (T[]) Array.newInstance(construtor.getDeclaringClass(), 0);
      int count = 0;
 
      // Lista via índice hash para não depender de varredura sequencial do arquivo.
@@ -116,30 +105,32 @@ public class Arquivo <T extends Registro> {
      return array;
      }
      
-     public boolean delete(int id) throws Exception {
-          /*arquivo.seek(TAM_CABECALHO);
-          
-          while (arquivo.getFilePointer() < arquivo.length()) {
-               long posicao = arquivo.getFilePointer();
-               byte lapide = arquivo.readByte();
-               short tamanho = arquivo.readShort();
-               byte[] dados = new byte[tamanho];
-               arquivo.read(dados);
+     //readAll arvoreB
+     @SuppressWarnings("unchecked")
+     public T[] readAllArvB() throws Exception {
+          long[] enderecos = arvB.listarOrdenado();
+          T[] array = (T[]) Array.newInstance(construtor.getDeclaringClass(), enderecos.length);
+          int count = 0;
 
+          for (long endereco : enderecos) {
+               arquivo.seek(endereco);
+               byte lapide = arquivo.readByte();
                if (lapide == ' ') {
+                    short tamanho = arquivo.readShort();
+                    byte[] dados = new byte[tamanho];
+                    arquivo.readFully(dados);
                     T obj = construtor.newInstance();
                     obj.fromByteArray(dados);
-
-                    if (obj.getId() == id) {
-                         arquivo.seek(posicao);
-                         arquivo.writeByte('*');
-                         addDeleted(tamanho, posicao);
-                         return true;
-                    }
+                    array[count++] = obj;
                }
           }
-          return false;*/
 
+          if (count < array.length) array = Arrays.copyOf(array, count);
+
+          return array;
+     }
+
+     public boolean delete(int id) throws Exception {
           long pos = hashExt.read(id);
           if (pos == -1) return false;
 
@@ -152,6 +143,7 @@ public class Arquivo <T extends Registro> {
           addDeleted(tamanho, pos);
 
           hashExt.delete(id);
+          arvB.delete(id);
 
           return true;
      }
@@ -195,6 +187,7 @@ public class Arquivo <T extends Registro> {
                }
 
                hashExt.update(novoObj.getId(), enderecNovo);
+               arvB.update(novoObj.getId(), enderecNovo);
           }
 
           return true;
@@ -281,5 +274,6 @@ public class Arquivo <T extends Registro> {
      public void close() throws Exception {
           arquivo.close();
           hashExt.close();
+          arvB.close();
      }
 }

@@ -39,6 +39,11 @@ public class ReceitaDAO {
      public Receita[] listarReceitas() throws Exception {
           return arq.readAll();
      }
+     
+     //listagem a partir do ID usando a arvore B
+     public Receita[] listarReceitasOrdenados() throws Exception {
+          return arq.readAllArvB();
+     }
 
      public boolean alterarReceita (Receita r) throws Exception {
           return arq.update(r);
