@@ -3,13 +3,15 @@ package dao;
 import model.Alimento;
 import util.Arquivo;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class AlimentoDAO {
     private Arquivo<Alimento> arq;
+    private ReceitaAlimentoDAO receitaAlimentoDAO;
 
     public AlimentoDAO() throws Exception {
         arq = new Arquivo<>("alimentos", Alimento.class.getConstructor());
+        receitaAlimentoDAO = new ReceitaAlimentoDAO();
     }
 
     // CREATE
@@ -67,6 +69,7 @@ public class AlimentoDAO {
     }
 
     public boolean excluirAlimento(int id) throws Exception {
+        receitaAlimentoDAO.deleteAlimento(id); //exclui automaticamente quando um alimento e/ou receita que tiverem relação forem deletadas
         return arq.delete(id);
     }
 }

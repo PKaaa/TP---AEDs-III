@@ -5,14 +5,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import dao.AlimentoDAO;
+import dao.ReceitaDAO;
+import dao.ReceitaAlimentoDAO;
 import model.Alimento;
+import model.Receita;
 
 public class MenuAlimento {
      private AlimentoDAO alimentoDAO;
+     private ReceitaAlimentoDAO receitaAlimentoDAO;
+     private ReceitaDAO receitaDAO;
+     //private MenuReceitas menuReceitas = new MenuReceitas();
      private Scanner console = new Scanner (System.in);
      
      public MenuAlimento () throws Exception {
           alimentoDAO = new AlimentoDAO();
+          receitaAlimentoDAO = new ReceitaAlimentoDAO();
+          receitaDAO = new ReceitaDAO();
      }
 
      void menu() throws Exception {
@@ -25,6 +33,7 @@ public class MenuAlimento {
                System.out.println ("\n3 - Alterar Alimento");
                System.out.println ("\n4 - Excluir Alimento");
                System.out.println("\n5 - Listar Alimentos");
+               System.out.println ("\n6 - Listar as receitas que utilizam determinado alimento.");
                System.out.println ("\n0 - Voltar/Sair");
                System.out.println ("\nOpção: ");
 
@@ -56,6 +65,9 @@ public class MenuAlimento {
                          break;
                     case 5:
                          listarAlimentos();
+                         break;
+                    case 6:
+                         listarReceitasAlimento();
                          break;
                      case 0:
                          System.out.println("Saindo...");
@@ -127,7 +139,7 @@ public class MenuAlimento {
           }
      }
 
-     private void incluirAlimento() throws Exception {
+     protected void incluirAlimento() throws Exception {
           System.out.println ("\n\nDigite o nome do alimento: ");
           String nome = console.nextLine().trim();
           System.out.println ("\n\nDigite as categorias do alimento (separadamente por virgula): ");
@@ -180,7 +192,7 @@ public class MenuAlimento {
           }
      }
 
-     private void excluirAlimento() throws Exception {
+     protected void excluirAlimento() throws Exception {
           System.out.println ("\n\nDigite o ID do alimento: ");
           int id = console.nextInt();
           console.nextLine();
@@ -204,5 +216,29 @@ public class MenuAlimento {
                System.err.println("Erro ao listar alimentos." + e.getMessage());
                e.printStackTrace();
           }
+     }
+
+     private void listarReceitasAlimento() throws Exception {
+          System.out.println("\nDigite o ID do alimento: ");
+          int idA = console.nextInt();
+          console.nextLine();
+
+          Alimento a = alimentoDAO.buscarAlimentoID(idA);
+          if (a == null) {
+               System.out.println("\nAlimento nao encontrado.");
+               return;
+          }
+
+          int[] idsReceitas = receitaAlimentoDAO.listarReceitasAlimento(idA);
+          if (idsReceitas.length == 0) {
+               System.out.println("\nNenhuma receita utiliza este alimento.");
+               return;
+          }
+
+          for (int idR : idsReceitas) {
+               Receita r = receitaDAO.buscarReceitaID(idA);
+               if (r != null) System.out.println(r);
+          }
+          System.out.println("\nTotal de " + idsReceitas.length + " receita(s) encontrada(s) com o alimento " + a.getNome() + ".");
      }
 }

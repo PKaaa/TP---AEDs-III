@@ -5,14 +5,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import dao.ReceitaDAO;
+import dao.AlimentoDAO;
+import dao.ReceitaAlimentoDAO;
 import model.Receita;
+import model.Alimento;
 
 public class MenuReceitas {
      private ReceitaDAO receitaDAO;
+     private AlimentoDAO alimentoDAO;
+     private ReceitaAlimentoDAO receitaAlimentoDAO;
+     private MenuAlimento menuAlimento = new MenuAlimento();
      private Scanner console = new Scanner (System.in);
 
      public MenuReceitas() throws Exception {
           receitaDAO = new ReceitaDAO();
+          alimentoDAO = new AlimentoDAO();
+          receitaAlimentoDAO = new ReceitaAlimentoDAO();
+
      }
 
      public void menu() throws Exception {
@@ -25,6 +34,9 @@ public class MenuReceitas {
                System.out.println ("\n3 - Alterar Receita");
                System.out.println ("\n4 - Excluir Receita");
                System.out.println ("\n5 - Listar Receitas");
+               System.out.println ("\n6 - Adicionar um alimento a uma receita");
+               System.out.println ("\n7 - Remover um alimento de uma receita");
+               System.out.println ("\n8 - Listar os alimentos de uma receita");
                System.out.println ("\n0 - Voltar/Sair");
                System.out.print("\nOpção: ");
 
@@ -51,6 +63,15 @@ public class MenuReceitas {
                          break;
                     case 5:
                          listarReceitas();
+                         break;
+                    case 6:
+                         incluirAlimentoReceita();
+                         break;
+                    case 7:
+                         excluirAlimentoReceita();
+                         break;
+                    case 8:
+                         listarAlimentosReceita();
                          break;
                     case 0:
                          System.out.println("Saindo...");
@@ -118,7 +139,7 @@ public class MenuReceitas {
           }
      }
 
-     private void incluirReceita() throws Exception {
+     protected void incluirReceita() throws Exception {
           System.out.println ("\n\nDigite o nome da receita: ");
           String nome = console.nextLine().trim();
 
@@ -224,7 +245,7 @@ public class MenuReceitas {
           }
      }
 
-     private void excluirReceita() throws Exception {
+     protected void excluirReceita() throws Exception {
           System.out.println ("\n\nDigite o ID da receita que voce gostaria de excluir: ");
           int id = console.nextInt();
           console.nextLine();
@@ -247,6 +268,93 @@ public class MenuReceitas {
                System.err.println("Erro ao listar as receitas.");
                e.printStackTrace();
           }
+     }
+
+     private void incluirAlimentoReceita() throws Exception {
+          System.out.println ("\n\nDigite o ID da receita: ");
+          int idR = console.nextInt();
+          console.nextLine();
+
+          Receita r = receitaDAO.buscarReceitaID(idR);
+          if (r == null) {
+               System.out.println("\nReceita nao encontrada.");
+               return;
+          }
+          System.out.println ("\nReceita: " + r.getTitulo());
+
+          System.out.println ("\n\nO alimento que voce deseja adicionar ja existe? (S/N): ");
+          String resp = console.nextLine().trim();
+          if (resp.equals("S") || resp.equals("s")) {
+               System.out.println ("\n\nDigite o ID do alimento: ");
+               int idA = console.nextInt();
+               console.nextLine();
+
+               Alimento a = alimentoDAO.buscarAlimentoID(idA);
+               if (a == null) {
+                    System.out.println("\nAlimento nao encontrado/nao existe.");
+                    return;
+               }
+
+               if (receitaAlimentoDAO.createRelacao(idR, idA)) System.out.println("\nAlimento adicionado a receita com sucesso!");
+               else System.out.println("\nErro ao adicionar alimento a receita.");
+          } else {
+               menuAlimento.incluirAlimento();
+               incluirAlimentoReceita(); //chama o método novamente para adicionar o alimento recém criado
+          }
+     }
+
+     private void excluirAlimentoReceita() throws Exception {
+          System.out.println ("\n\nDigite o ID da receita que voce gostaria de excluir: ");
+          int idR = console.nextInt();
+          console.nextLine();
+
+          Receita r = receitaDAO.buscarReceitaID(idR);
+          if (r == null) {
+               System.out.println("\nReceita nao encontrada.");
+               return;
+          }
+          
+          System.out.println ("\nAlimentos na receita " + r.getTitulo() + ":"); //facilita a escolha de qual alimento ira excluir
+          int[] idsAlimentos = receitaAlimentoDAO.listarAlimentosReceita(idR);
+          if (idsAlimentos.length == 0) {
+               System.out.println("\nNenhum alimento encontrado para esta receita.");
+               return;
+          }
+
+          for (int idA : idsAlimentos) {
+               Alimento a = alimentoDAO.buscarAlimentoID(idA);
+               if (a != null) System.out.println(a + " ");
+          }
+          System.out.println("\nDigite o ID do alimento que voce gostaria de excluir da receita " + r.getTitulo() + ": ");
+          int idA = console.nextInt();
+          console.nextLine();
+
+          if (receitaAlimentoDAO.deleteRelacao(idR, idA)) System.out.println("\nAlimento excluido com sucesso!");
+          else System.out.println("\nErro ao excluir alimento da receita.");
+     }
+
+     private void listarAlimentosReceita() throws Exception {
+          System.out.println ("\n\nDigite o ID da receita: ");
+          int idR = console.nextInt();
+          console.nextLine();
+
+          Receita r = receitaDAO.buscarReceitaID(idR);
+          if (r == null) {
+               System.out.println("\nReceita nao encontrada.");
+               return;
+          }
+
+          System.out.println("\nAlimentos na receita " + r.getTitulo() + ":");
+          int[] idsAlimentos = receitaAlimentoDAO.listarAlimentosReceita(idR);
+          if (idsAlimentos.length == 0) {
+               System.out.println("\nNenhum alimento encontrado para esta receita.");
+               return;
+          }
+          for (int idA : idsAlimentos) {
+               Alimento a = alimentoDAO.buscarAlimentoID(idA);
+               if (a != null) System.out.println(a);
+          }
+          System.out.println("\nTotal de " + idsAlimentos.length + " alimento(s) encontrado(s) para a receita " + r.getTitulo() + ".");
      }
 }
 
