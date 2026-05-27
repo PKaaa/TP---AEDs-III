@@ -214,10 +214,11 @@ public class Arquivo <T extends Registro> {
                     else proximo = -1;
                          
                     if (tamanho > tamanhoEspaco) {
-                         if (posicao == 4)
+                         if (posicao == 4){
                               arquivo.seek(posicao);
-                         else
+                         } else {
                               arquivo.seek(posicao + 3);
+                         }
                               arquivo.writeLong(enderecoEspaco);
                               arquivo.seek(enderecoEspaco + 3);
                               arquivo.writeLong(endereco);
@@ -256,11 +257,12 @@ public class Arquivo <T extends Registro> {
                }
 
                if (tamanho >= tamanhoNecessario) {
-                    if (posicao == 4)
+                    if (posicao == 4){
                          arquivo.seek(posicao);
-                    else
+                    } else {
                          arquivo.seek(posicao + 3);
-                         arquivo.writeLong(proximo);
+                    }
+                    arquivo.writeLong(proximo);
                     return endereco;
                }
 

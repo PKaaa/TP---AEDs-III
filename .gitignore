@@ -5,3 +5,5 @@ dados/receitas/arquivo.dat
 *.class
 out/
 dados/
+/dados
+/dados
