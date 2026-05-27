@@ -5,9 +5,11 @@ import util.Arquivo;
 
 public class ReceitaDAO {
      private Arquivo <Receita> arq;
+     private ReceitaAlimentoDAO receitaAlimentoDAO;
 
      public ReceitaDAO () throws Exception {
           arq = new Arquivo <> ("receitas", Receita.class.getConstructor());
+          receitaAlimentoDAO = new ReceitaAlimentoDAO();
      }
 
      public boolean incluirReceita (Receita r) throws Exception {
@@ -39,12 +41,18 @@ public class ReceitaDAO {
      public Receita[] listarReceitas() throws Exception {
           return arq.readAll();
      }
+     
+     //listagem a partir do ID usando a arvore B
+     public Receita[] listarReceitasOrdenados() throws Exception {
+          return arq.readAllArvB();
+     }
 
      public boolean alterarReceita (Receita r) throws Exception {
           return arq.update(r);
      }
 
      public boolean excluirReceita (int id) throws Exception {
+          receitaAlimentoDAO.deleteReceita(id);//exclui automaticamente quando um alimento e/ou receita que tiverem relação forem deletadas
           return arq.delete(id);
      }
 }

@@ -32,6 +32,11 @@ public class ClienteDAO {
           return arq.readAll();
      }
 
+     //listagem a partir do ID usando a arvore B
+     public Cliente[] listarClientesOrdenados() throws Exception {
+          return arq.readAllArvB();
+     }
+
      public boolean alterarCliente (Cliente c) throws Exception {
           return arq.update(c);
      }
