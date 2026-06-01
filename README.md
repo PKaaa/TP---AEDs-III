@@ -129,3 +129,35 @@ Backend nao esta rodando. Compile e inicie o servidor antes do seed.
 
 ## Observacao
 Se os dados novos nao aparecerem no navegador, atualize com Ctrl+F5.
+
+## Compactação de arquivos
+
+### LZW
+
+O método de dicionário se localiza na pasta src/util/LZW.java
+
+Assim que os dados das entidades são gravadas na pasta "dados", é necessário realizar a compilação da compactação via terminal. 
+(Compilação)
+```bash
+javac src/util/LZW.java -d src
+```
+Quando "LZW.class" aparecer no explorer, significa que a compilação foi um sucesso. É possível executar a compactação da pasta dados, que serão armazenadas em um arquivo nomeado "backup.hl" dentro dessa mesma pasta:
+
+![alt text](image.png)
+
+#### Execução de Compactação:
+```bash
+java -cp src util.LZW c
+```
+Uma mensagem será imprimida no terminal, indicando o tamanho original (em bytes) dos arquivos da pasta de dados gravados, o tamanho do arquivo após a compactação e a taxa em porcentagem de reaproveitamento.
+
+![alt text](image-1.png)
+
+#### Execução da Descompactação:
+```bash
+java -cp src util.LZW d
+```
+
+Será imprimido uma mensagem dos arquivos localizados na pasta dados e logo depois uma mensagem indicando sucesso na descompactação via LZW.
+
+![alt text](image-2.png)
