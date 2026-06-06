@@ -161,3 +161,52 @@ java -cp src util.LZW d
 Será imprimido uma mensagem dos arquivos localizados na pasta dados e logo depois uma mensagem indicando sucesso na descompactação via LZW.
 
 ![alt text](image-2.png)
+
+### Huffman
+
+O algoritmo de compactação por Huffman está localizado na pasta src/util/Huffman.java.
+
+Assim que os dados das entidades são gravados na pasta dados, é necessário realizar a compilação da compactação via terminal.
+
+#### Compilação
+```bash
+javac src/util/Huffman.java -d src
+```
+Quando o arquivo "Huffman.class" aparecer no explorer, significa que a compilação foi realizada com sucesso. A partir disso, é possível compactar todos os arquivos da pasta dados, gerando um único arquivo de backup chamado "backup.hf".
+
+#### Execução da Compactação
+```bash
+java -cp src util.Huffman c
+```
+Ao executar a compactação, o sistema percorre todos os arquivos presentes na pasta dados, calcula as frequências dos bytes, constrói a árvore de Huffman e gera o arquivo "backup.hf".
+
+Uma mensagem será exibida no terminal informando:
+
+Tamanho original dos dados (em bytes);
+Tamanho do arquivo compactado;
+Taxa de compressão obtida;
+Confirmação da criação do backup.
+
+Exemplo:
+
+![alt text](Huffmanc.png)
+
+#### Execução da Descompactação
+```bash
+java -cp src util.Huffman d
+```
+Durante a descompactação, o sistema lê o arquivo "backup.hf", reconstrói a árvore de Huffman a partir das frequências armazenadas e restaura todos os arquivos originais para suas respectivas pastas dentro de dados.
+
+Uma mensagem semelhante à seguinte será exibida:
+
+Restaurado: ./dados/alimentos/bucket.dat
+Restaurado: ./dados/alimentos/diretorio.dat
+Restaurado: ./dados/receitas/bucket.dat
+Restaurado: ./dados/receitas/diretorio.dat
+Descompactacao Huffman realizada com sucesso!
+
+#### Funcionamento
+
+O algoritmo Huffman realiza a compactação utilizando codificação por frequência. Os bytes mais frequentes recebem códigos menores, enquanto os menos frequentes recebem códigos maiores. Durante a compactação são armazenadas as frequências dos símbolos, permitindo que a árvore de Huffman seja reconstruída posteriormente para a descompactação.
+
+O resultado é um único arquivo de backup (backup.hf) contendo todos os arquivos utilizados pelo sistema.
