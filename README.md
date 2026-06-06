@@ -182,10 +182,10 @@ Ao executar a compactação, o sistema percorre todos os arquivos presentes na p
 
 Uma mensagem será exibida no terminal informando:
 
-Tamanho original dos dados (em bytes);
-Tamanho do arquivo compactado;
-Taxa de compressão obtida;
-Confirmação da criação do backup.
+- Tamanho original dos dados (em bytes);
+- Tamanho do arquivo compactado;
+- Taxa de compressão obtida;
+- Confirmação da criação do backup.
 
 Exemplo:
 
@@ -199,11 +199,11 @@ Durante a descompactação, o sistema lê o arquivo "backup.hf", reconstrói a �
 
 Uma mensagem semelhante à seguinte será exibida:
 
-Restaurado: ./dados/alimentos/bucket.dat
-Restaurado: ./dados/alimentos/diretorio.dat
-Restaurado: ./dados/receitas/bucket.dat
-Restaurado: ./dados/receitas/diretorio.dat
-Descompactacao Huffman realizada com sucesso!
+- Restaurado: ./dados/alimentos/bucket.dat
+- Restaurado: ./dados/alimentos/diretorio.dat
+- Restaurado: ./dados/receitas/bucket.dat
+- Restaurado: ./dados/receitas/diretorio.dat
+- Descompactacao Huffman realizada com sucesso!
 
 #### Funcionamento
 
