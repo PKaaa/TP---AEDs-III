@@ -269,3 +269,74 @@ Total: 2 cliente(s) encontrado(s).
 O KMP evita comparações redundantes ao construir, a partir do próprio padrão buscado, uma **tabela de falha** (função de prefixo). Essa tabela indica, para cada posição do padrão, qual o maior prefixo que também é sufixo até aquele ponto.
  
 Durante a busca, ao encontrar um caractere que não corresponde (mismatch), o algoritmo usa essa tabela para "pular" diretamente para a próxima posição válida no padrão, sem precisar retroceder no texto. Isso garante complexidade O(n + m), onde `n` é o tamanho do texto e `m` é o tamanho do padrão — evitando o reprocessamento típico de uma busca ingênua.
+
+### Boyer-Moore
+
+O algoritmo Boyer-Moore está localizado na pasta `src/service/busca/BoyerMoore.java`, e é utilizado através da classe orquestradora `src/service/BuscaService.java`. A interação é feita a partir da opção do menu do `Principal.java` **"4 - Pesquisar por padrão (KMP / BM)"**. É preferível que essa opção seja escolhida após a gravação de dados das entidades envolvidas.
+
+O Boyer-Moore permite buscar um padrão (substring) dentro dos seguintes campos textuais do sistema:
+
+* Nome do Cliente
+* Nome do Alimento
+* Título da Receita
+
+A busca não exige correspondência exata — basta que o padrão informado esteja contido no texto do campo (busca case-insensitive). Por exemplo, buscar por "ana" encontra um cliente chamado "Ana" ou "Mariana".
+
+### Compilação
+
+```bash
+javac service/busca/BoyerMoore.java service/BuscaService.java -d .
+```
+
+Execute o comando acima a partir da pasta `src`. Quando os arquivos `BoyerMoore.class` e `BuscaService.class` aparecerem no explorer, a compilação foi concluída com sucesso.
+
+#### Execução via menu do sistema
+
+O Boyer-Moore está integrado diretamente ao menu principal do sistema (console). Para utilizá-lo:
+
+1. Compile e execute o `Principal.java` normalmente:
+
+```bash
+javac view/*.java service/busca/*.java service/*.java dao/*.java model/*.java util/*.java -d .
+java view.Principal
+```
+
+2. No menu principal, escolha a opção:
+
+```
+4 - Pesquisar por padrão (KMP / BM)
+```
+
+3. Escolha qual entidade deseja buscar (Cliente, Alimento ou Receita).
+
+4. Escolha o algoritmo:
+
+```
+1 - KMP (Knuth-Morris-Pratt)
+2 - Boyer-Moore
+```
+
+Digite `2` para utilizar o Boyer-Moore.
+
+5. Digite o padrão (texto) que deseja buscar. O sistema vai retornar todos os registros cujo campo correspondente contém esse padrão.
+
+Exemplo de uso buscando por clientes cujo nome contenha "ana":
+
+```
+Digite o padrão a buscar no nome do cliente: ana
+
+--- Resultado da busca (BM) ---
+Cliente {id = 1; Nome = ana; Data de Nascimento = ...}
+Cliente {id = 3; Nome = mariana; Data de Nascimento = ...}
+
+Total: 2 cliente(s) encontrado(s).
+```
+
+#### Funcionamento
+
+O Boyer-Moore realiza as comparações do padrão com o texto da direita para a esquerda. Antes da busca, o algoritmo constrói uma **tabela de última ocorrência** (heurística *Bad Character*), que registra a posição mais à direita de cada caractere presente no padrão.
+
+Durante a busca, quando ocorre uma divergência entre o padrão e o texto, essa tabela é utilizada para determinar quantas posições o padrão pode ser deslocado. Em vez de avançar apenas uma posição por vez, o algoritmo frequentemente realiza saltos maiores, reduzindo significativamente o número de comparações necessárias.
+
+Na implementação desenvolvida foi utilizada a heurística **Bad Character**, suficiente para localizar ocorrências do padrão de forma eficiente. Embora a complexidade no pior caso seja O(n·m), o desempenho médio é geralmente superior ao da busca ingênua, especialmente em textos longos e padrões maiores.
+
