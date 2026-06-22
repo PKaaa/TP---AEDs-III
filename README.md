@@ -340,3 +340,33 @@ Durante a busca, quando ocorre uma divergência entre o padrão e o texto, essa 
 
 Na implementação desenvolvida foi utilizada a heurística **Bad Character**, suficiente para localizar ocorrências do padrão de forma eficiente. Embora a complexidade no pior caso seja O(n·m), o desempenho médio é geralmente superior ao da busca ingênua, especialmente em textos longos e padrões maiores.
 
+### Criptografia
+## XOR Encryption
+A criptografia XOR é utilizada para proteger as senhas dos clientes.
+
+Como funciona:
+A senha é convertida para bytes
+Cada byte é combinado com a chave usando XOR
+O resultado é codificado em Base64 para armazenamento
+Para descriptografar, o processo é invertido
+Chave utilizada: "NutriChef2024SecureKey"
+
+### Criptografar
+String senhaCriptografada = CriptografiaXOR.criptografar("minhaSenha123");
+
+### Descriptografar
+String senhaOriginal = CriptografiaXOR.descriptografar(senhaCriptografada);
+
+### Teste
+- Testar a Criptografia
+```bash
+java -cp bin util.TesteCriptografia
+```
+- Testar a API com cURL
+```bash
+# Listar alimentos
+curl http://localhost:7777/alimentos
+
+# Buscar receitas
+curl "http://localhost:7777/pesquisa/receitas?padrao=frango&algoritmo=KMP"
+```
