@@ -116,12 +116,19 @@ public class MenuCliente {
           String nome = console.nextLine();
           System.out.println ("\nData de Nasciemento (dd/MM/aaaa): ");
           String dataNascimentoStr = console.nextLine();
+          System.out.println("\nDigite o email do cliente: ");
+          String email = console.nextLine();
+          System.out.println("\nDigite a senha do cliente: ");
+          String senha = console.nextLine();
+
+
 
           try {
                LocalDate nascimento = LocalDate.parse (dataNascimentoStr, DateTimeFormatter.ofPattern ("dd/MM/yyyy"));
                Cliente c = new Cliente (nome, nascimento, LocalDate.now());
-               c.setEmail(new String[0]);
-               c.setSenha("");
+               c.setEmail(new String[]{email});
+               c.setSenha(senha);
+               
                clienteDAO.incluirCliente(c);
                System.out.println("\nCliente incluído com sucesso!");
           } catch (DateTimeParseException e) {
