@@ -8,6 +8,10 @@ import model.Cliente;
 import model.Alimento;
 import model.Receita;
 
+import service.BuscaService;
+import service.busca.KMP;
+import service.busca.BoyerMoore;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -149,27 +153,21 @@ public class Servidor {
             }
         });
 
-        // POST /clientes/login — autenticação simples
+        // POST /clientes/login — autenticação com criptografia
         post("/clientes/login", (req, res) -> {
             res.type("application/json");
             try {
                 LoginRequest lr = gson.fromJson(req.body(), LoginRequest.class);
-                Cliente[] todos = clienteDAO.listarClientes();
-                for (Cliente c : todos) {
-                    // Verifica e-mail e senha (XOR quando implementado no futuro)
-                    boolean emailOk = false;
-                    for (String e : c.getEmail()) {
-                        if (e.equalsIgnoreCase(lr.email)) {
-                            emailOk = true;
-                            break;
-                        }
-                    }
-                    if (emailOk && c.getSenha().equals(lr.senha)) {
-                        // Não retorna a senha
-                        c.setSenha(null);
-                        return gson.toJson(c);
-                    }
+
+                // Usa autenticação com criptografia
+                Cliente clienteAutenticado = clienteDAO.autenticarCliente(lr.email, lr.senha);
+
+                if (clienteAutenticado != null) {
+                    // Não retorna a senha
+                    clienteAutenticado.setSenha(null);
+                    return gson.toJson(clienteAutenticado);
                 }
+
                 res.status(401);
                 return erro("Credenciais inválidas");
             } catch (Exception e) {
@@ -498,6 +496,85 @@ public class Servidor {
                 return erro(e.getMessage());
             }
         });
+
+        BuscaService buscaService = new BuscaService();
+
+        // GET /pesquisa/receitas?padrao=termo&algoritmo=KMP
+        get("/pesquisa/receitas", (req, res) -> {
+            res.type("application/json");
+            try {
+                String padrao = req.queryParams("padrao");
+                String algoritmo = req.queryParams("algoritmo");
+
+                if (padrao == null || padrao.isBlank()) {
+                    res.status(400);
+                    return erro("Padrão de busca é obrigatório");
+                }
+
+                if (algoritmo == null || algoritmo.isBlank()) {
+                    algoritmo = "KMP";
+                }
+
+                ArrayList<Receita> resultados = buscaService.buscarReceita(padrao, algoritmo);
+                return gson.toJson(resultados);
+            } catch (Exception e) {
+                res.status(500);
+                return erro(e.getMessage());
+            }
+        });
+
+        // GET /pesquisa/alimentos?padrao=termo&algoritmo=KMP
+        get("/pesquisa/alimentos", (req, res) -> {
+            res.type("application/json");
+            try {
+                String padrao = req.queryParams("padrao");
+                String algoritmo = req.queryParams("algoritmo");
+
+                if (padrao == null || padrao.isBlank()) {
+                    res.status(400);
+                    return erro("Padrão de busca é obrigatório");
+                }
+
+                if (algoritmo == null || algoritmo.isBlank()) {
+                    algoritmo = "KMP";
+                }
+
+                ArrayList<Alimento> resultados = buscaService.buscarAlimento(padrao, algoritmo);
+                return gson.toJson(resultados);
+            } catch (Exception e) {
+                res.status(500);
+                return erro(e.getMessage());
+            }
+        });
+
+        // GET /pesquisa/clientes?padrao=termo&algoritmo=KMP
+        get("/pesquisa/clientes", (req, res) -> {
+            res.type("application/json");
+            try {
+                String padrao = req.queryParams("padrao");
+                String algoritmo = req.queryParams("algoritmo");
+
+                if (padrao == null || padrao.isBlank()) {
+                    res.status(400);
+                    return erro("Padrão de busca é obrigatório");
+                }
+
+                if (algoritmo == null || algoritmo.isBlank()) {
+                    algoritmo = "KMP";
+                }
+
+                ArrayList<Cliente> resultados = buscaService.buscarCliente(padrao, algoritmo);
+                // Remove senhas por segurança
+                for (Cliente c : resultados) {
+                    c.setSenha(null);
+                }
+                return gson.toJson(resultados);
+            } catch (Exception e) {
+                res.status(500);
+                return erro(e.getMessage());
+            }
+        });
+        
 
         System.out.println("╔══════════════════════════════════════╗");
         System.out.println("║   NutriChef API — porta " + PORTA + "        ║");

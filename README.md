@@ -358,15 +358,47 @@ String senhaCriptografada = CriptografiaXOR.criptografar("minhaSenha123");
 String senhaOriginal = CriptografiaXOR.descriptografar(senhaCriptografada);
 
 ### Teste
-- Testar a Criptografia
-```bash
-java -cp bin util.TesteCriptografia
-```
-- Testar a API com cURL
-```bash
-# Listar alimentos
-curl http://localhost:7777/alimentos
 
-# Buscar receitas
-curl "http://localhost:7777/pesquisa/receitas?padrao=frango&algoritmo=KMP"
-```
+Cadastro de Cliente:
+
+1. O usuário informa a senha normalmente.
+
+2. O sistema criptografa automaticamente usando XOR
+
+3. A senha criptografada é armazenada no arquivo de dados
+
+Login:
+
+1. O usuário informa a senha normalmente
+
+2. O sistema descriptografa a senha armazenada
+
+3. Compara com a senha informada
+
+4. Se forem iguais, o login é autorizado
+
+Demonstração no Sistema
+Para verificar a criptografia funcionando:
+
+Execute o sistema:
+
+```` bash
+
+java view.Principal
+
+````
+Cadastre um cliente:
+
+1. Vá em Clientes → Incluir Cliente
+
+2. Informe os dados e uma senha (ex: minhaSenha123)
+
+3. O sistema criptografa a senha automaticamente
+
+4. Verifique o arquivo de dados:
+
+5. Abra o arquivo ./dados/clientes/arquivo.dat
+
+A senha estará criptografada em formato Base64
+
+Exemplo: TWlu...YW55 (não é legível)
