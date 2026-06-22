@@ -15,6 +15,7 @@ public class Principal {
                     System.out.println("\n1 - Clientes");
                     System.out.println("\n2 - Alimentos");
                     System.out.println("\n3 - Receitas");
+                    System.out.println("\n4 - Pesquisa por Padrão");
                     System.out.println("\n0 - Sair");
                     System.out.print("\nOpção: ");
                     
@@ -36,6 +37,10 @@ public class Principal {
                          case 3:
                               MenuReceitas menuReceitas = new MenuReceitas();
                               menuReceitas.menu();
+                              break;
+                         case 4:
+                              MenuBusca menuBusca = new MenuBusca();
+                              menuBusca.menu();
                               break;
                          case 0:
                               System.out.println("Saindo...");
