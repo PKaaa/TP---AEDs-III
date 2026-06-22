@@ -210,3 +210,62 @@ Uma mensagem semelhante à seguinte será exibida:
 O algoritmo Huffman realiza a compactação utilizando codificação por frequência. Os bytes mais frequentes recebem códigos menores, enquanto os menos frequentes recebem códigos maiores. Durante a compactação são armazenadas as frequências dos símbolos, permitindo que a árvore de Huffman seja reconstruída posteriormente para a descompactação.
 
 O resultado é um único arquivo de backup (backup.hf) contendo todos os arquivos utilizados pelo sistema.
+
+## Casamento de Padrões
+
+### KMP (Knuth-Morris-Pratt)
+
+O algoritmo KMP está localizado na pasta src/service/busca/KMP.java, e é utilizado através da classe orquestradora src/service/BuscaService.java. A interação é feita a partir da opção do menu do Principal.java "4 - Pesquisar por padrão (KMP / BM)". É preferível que essa opção seja escolhida após a gravação de dados das entidades envolvidas.
+
+O KMP permite buscar um padrão (substring) dentro dos seguintes campos textuais do sistema:
+- Nome do Cliente
+- Nome do Alimento
+- Título da Receita
+  
+A busca não exige correspondência exata — basta que o padrão informado esteja contido no texto do campo (busca case-insensitive). Por exemplo, buscar por "ana" encontra um cliente chamado "Ana" ou "Mariana".
+
+### Compilação
+```bash
+javac service/busca/KMP.java service/BuscaService.java -d .
+```
+Execute o comando acima a partir da pasta `src`. Quando os arquivos `KMP.class` e `BuscaService.class` aparecerem no explorer, a compilação foi concluída com sucesso.
+
+#### Execução via menu do sistema 
+O KMP está integrado diretamente ao menu principal do sistema (console). Para utilizá-lo:
+ 
+1. Compile e execute o `Principal.java` normalmente:
+```bash
+javac view/*.java service/busca/*.java service/*.java dao/*.java model/*.java util/*.java -d .
+java view.Principal
+```
+ 
+2. No menu principal, escolha a opção:
+```
+4 - Pesquisar por padrão (KMP / BM)
+```
+ 
+3. Escolha qual entidade deseja buscar (Cliente, Alimento ou Receita).
+   
+4. Escolha o algoritmo:
+```
+1 - KMP (Knuth-Morris-Pratt)
+2 - Boyer-Moore
+```
+Digite `1` para utilizar o KMP.
+ 
+5. Digite o padrão (texto) que deseja buscar. O sistema vai retornar todos os registros cujo campo correspondente contém esse padrão.
+Exemplo de uso buscando por clientes cujo nome contenha "ana":
+```
+Digite o padrão a buscar no nome do cliente: ana
+ 
+--- Resultado da busca (KMP) ---
+Cliente {id = 1; Nome = ana; Data de Nascimento = ...}
+Cliente {id = 3; Nome = mariana; Data de Nascimento = ...}
+ 
+Total: 2 cliente(s) encontrado(s).
+```
+ 
+#### Funcionamento
+O KMP evita comparações redundantes ao construir, a partir do próprio padrão buscado, uma **tabela de falha** (função de prefixo). Essa tabela indica, para cada posição do padrão, qual o maior prefixo que também é sufixo até aquele ponto.
+ 
+Durante a busca, ao encontrar um caractere que não corresponde (mismatch), o algoritmo usa essa tabela para "pular" diretamente para a próxima posição válida no padrão, sem precisar retroceder no texto. Isso garante complexidade O(n + m), onde `n` é o tamanho do texto e `m` é o tamanho do padrão — evitando o reprocessamento típico de uma busca ingênua.
