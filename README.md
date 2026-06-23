@@ -126,7 +126,7 @@ PUT /receitas/:id
 DELETE /receitas/:id
 
 ## Estrutura do Projeto
-
+```
 TP---AEDs-III/
 ├── src/
 │   ├── controller/
@@ -174,7 +174,7 @@ TP---AEDs-III/
 │   └── seed_data.sh               # Carga de dados para testes
 ├── run.sh                         # Script de execução
 └── README.md                      # Este arquivo
-
+```
 ## Troubleshooting
 
 ### erro: no source files
