@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NutriChef</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
- 
+
   <!-- TELA DE LOGIN -->
   <div id="login-screen">
     <div class="login-box">
@@ -31,11 +33,7 @@
           <label>Senha</label>
           <input id="l-senha" type="password" class="fi" placeholder="••••••••">
         </div>
-        <button
-          class="btn btn-primary"
-          style="width:100%;justify-content:center;margin-top:8px"
-          onclick="doLogin()"
-        >
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="doLogin()">
           Entrar
         </button>
         <button class="login-link" onclick="showForgotMode()">Esqueceu a senha?</button>
@@ -67,11 +65,7 @@
             <input id="r-senha2" type="password" class="fi" placeholder="••••••••">
           </div>
         </div>
-        <button
-          class="btn btn-primary"
-          style="width:100%;justify-content:center;margin-top:8px"
-          onclick="doRegister()"
-        >
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="doRegister()">
           Criar conta
         </button>
         <button class="login-link" onclick="showLoginMode()">Voltar para login</button>
@@ -83,11 +77,8 @@
           <label>E-mail da conta</label>
           <input id="f-email" type="email" class="fi" placeholder="seu@email.com">
         </div>
-        <button
-          class="btn btn-ghost"
-          style="width:100%;justify-content:center;margin-top:-4px;margin-bottom:14px"
-          onclick="sendResetCode()"
-        >
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:-4px;margin-bottom:14px"
+          onclick="sendResetCode()">
           Enviar código para e-mail
         </button>
         <div class="fg">
@@ -104,29 +95,27 @@
             <input id="f-senha2" type="password" class="fi" placeholder="••••••••">
           </div>
         </div>
-        <button
-          class="btn btn-primary"
-          style="width:100%;justify-content:center;margin-top:8px"
-          onclick="doForgotPassword()"
-        >
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px"
+          onclick="doForgotPassword()">
           Atualizar senha
         </button>
         <button class="login-link" onclick="showLoginMode()">Voltar para login</button>
       </div>
     </div>
   </div>
- 
+
   <!-- APP PRINCIPAL -->
   <div id="app">
- 
+
     <!-- SIDEBAR -->
     <aside id="sidebar">
-      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Recolher/expandir sidebar" title="Recolher/expandir sidebar">⟨</button>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Recolher/expandir sidebar"
+        title="Recolher/expandir sidebar">⟨</button>
       <div class="sb-brand">
         <div class="sb-brand-logo">Nutri<span>Chef</span></div>
         <div class="sb-brand-sub">AEDs III — Fase 2</div>
       </div>
- 
+
       <div class="sb-chef">
         <div class="sb-chef-avatar">👨‍🍳</div>
         <div>
@@ -134,7 +123,7 @@
           <div class="sb-chef-role">Administrador</div>
         </div>
       </div>
- 
+
       <nav>
         <div class="nav-section"><span>Principal</span></div>
         <div class="nav-item active" data-page="dashboard" onclick="goPage('dashboard')">
@@ -150,27 +139,34 @@
         <div class="nav-item" data-page="receitas" onclick="goPage('receitas')">
           <span class="nav-ico">📋</span><span class="nav-label">Receitas</span>
         </div>
+        <!-- ADICIONE ISSO AQUI -->
+        <div class="nav-section"><span>Pesquisa</span></div>
+        <div class="nav-item" data-page="pesquisa" onclick="goPage('pesquisa')">
+          <span class="nav-ico">🔍</span>
+          <span class="nav-label">Pesquisa Avançada</span>
+        </div>
       </nav>
- 
+
       <div class="sb-footer">
-        <button class="btn-logout" onclick="doLogout()"><span class="btn-ico">↩</span><span class="btn-text">Sair</span></button>
+        <button class="btn-logout" onclick="doLogout()"><span class="btn-ico">↩</span><span
+            class="btn-text">Sair</span></button>
       </div>
     </aside>
- 
+
     <!-- MAIN -->
     <main id="main">
       <div class="topbar">
         <div>
           <div class="topbar-title" id="page-title">Dashboard</div>
-          <div class="topbar-sub"  id="page-sub">Visão geral do sistema</div>
+          <div class="topbar-sub" id="page-sub">Visão geral do sistema</div>
         </div>
         <div id="topbar-action"></div>
       </div>
       <div class="content" id="content"></div>
     </main>
- 
+
   </div>
- 
+
   <!-- MODAL -->
   <div class="overlay" id="overlay" onclick="overlayClick(event)">
     <div class="modal">
@@ -181,10 +177,11 @@
       <div id="modal-body"></div>
     </div>
   </div>
- 
+
   <!-- TOASTS -->
   <div id="toasts"></div>
- 
+
   <script src="js/scripts.js"></script>
 </body>
+
 </html>

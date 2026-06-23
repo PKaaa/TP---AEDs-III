@@ -1,6 +1,6 @@
 # TP - AEDs III (NutriChef)
 
-Sistema de gerenciamento com cadastro de clientes, alimentos e receitas, com API REST em Java e interface web.
+Sistema desenvolvido para a disciplina de **Algoritmos e Estruturas de Dados III** da PUC Minas. O NutriChef permite cadastrar e gerenciar clientes, alimentos e receitas, com API REST em Java e interface web.
 
 ## Tecnologias
 - Java (backend)
@@ -27,70 +27,153 @@ Sistema de gerenciamento com cadastro de clientes, alimentos e receitas, com API
 O arquivo `run.sh` já vem junto com o projeto. Basta executar estes passos na raiz do repositório:
 
 1. Dê permissão de execução ao script, uma única vez:
+
 ```bash
 chmod +x run.sh
 ```
 
 2. Para iniciar o projeto completo, rode:
+
 ```bash
 ./run.sh
 ```
-
-O backend sobe em `http://localhost:7777` e o frontend abre na porta exibida pelo `serve`.
+O backend sobe em http://localhost:7777 e o frontend abre na porta exibida pelo serve.
 
 ## Carga de dados para testes (seed)
+
 O script cria clientes, alimentos e receitas automaticamente via API.
 
-Execucao padrao:
+Execução padrão:
 
-```bash
+````bash
 cd /home/.../.../.../TP---AEDs-III
 ./scripts/seed_data.sh
-```
+````
 
 Com quantidades personalizadas:
 
-```bash
+````bash
 ./scripts/seed_data.sh http://localhost:7777 100 120 80
-```
+````
+## Parametros:
 
-Parametros:
-1. URL da API
-2. quantidade de clientes
-3. quantidade de alimentos
-4. quantidade de receitas
+URL da API
+
+quantidade de clientes
+
+quantidade de alimentos
+
+quantidade de receitas
 
 ## Funcionalidades implementadas
-- Login
-- Cadastro de usuario
-- Recuperacao de senha com codigo (solicitar e confirmar)
-- Dashboard com visao geral
-- CRUD de clientes
-- CRUD de alimentos
-- CRUD de receitas
-- Sidebar recolhivel com persistencia de estado
-- Busca com botao Pesquisar
-- Busca com filtro de campo:
-1. Clientes: Todos, ID, Nome, E-mail
-2. Alimentos: Todos, ID, Nome, Categoria
-3. Receitas: Todos, ID, Titulo, Tempo
+
+Login
+
+Cadastro de usuario
+
+Recuperacao de senha com codigo (solicitar e confirmar)
+
+Dashboard com visao geral
+
+CRUD de clientes
+
+CRUD de alimentos
+
+CRUD de receitas
+
+Sidebar recolhivel com persistencia de estado
+
+Busca com botao Pesquisar
+
+Busca com filtro de campo:
+
+Clientes: Todos, ID, Nome, E-mail
+
+Alimentos: Todos, ID, Nome, Categoria
+
+Receitas: Todos, ID, Titulo, Tempo
 
 ## Endpoints principais
-- GET /clientes
-- POST /clientes
-- PUT /clientes/:id
-- DELETE /clientes/:id
-- POST /clientes/login
-- POST /clientes/esqueci-senha/solicitar
-- POST /clientes/esqueci-senha/confirmar
-- GET /alimentos
-- POST /alimentos
-- PUT /alimentos/:id
-- DELETE /alimentos/:id
-- GET /receitas
-- POST /receitas
-- PUT /receitas/:id
-- DELETE /receitas/:id
+
+GET /clientes
+
+POST /clientes
+
+PUT /clientes/:id
+
+DELETE /clientes/:id
+
+POST /clientes/login
+
+POST /clientes/esqueci-senha/solicitar
+
+POST /clientes/esqueci-senha/confirmar
+
+GET /alimentos
+
+POST /alimentos
+
+PUT /alimentos/:id
+
+DELETE /alimentos/:id
+
+GET /receitas
+
+POST /receitas
+
+PUT /receitas/:id
+
+DELETE /receitas/:id
+
+## Estrutura do Projeto
+
+TP---AEDs-III/
+├── src/
+│   ├── controller/
+│   │   └── Servidor.java          # API REST
+│   ├── dao/
+│   │   ├── ClienteDAO.java        # Operações com clientes
+│   │   ├── AlimentoDAO.java       # Operações com alimentos
+│   │   ├── ReceitaDAO.java        # Operações com receitas
+│   │   └── ReceitaAlimentoDAO.java # Relacionamento N:N
+│   ├── model/
+│   │   ├── Cliente.java           # Entidade Cliente
+│   │   ├── Alimento.java          # Entidade Alimento
+│   │   ├── Receita.java           # Entidade Receita
+│   │   ├── ReceitaAlimento.java   # Entidade Relacionamento
+│   │   └── Registro.java          # Interface de serialização
+│   ├── service/
+│   │   ├── busca/
+│   │   │   ├── KMP.java           # Algoritmo KMP
+│   │   │   └── BoyerMoore.java    # Algoritmo Boyer-Moore
+│   │   ├── BuscaService.java      # Serviço de busca
+│   │   └── ...
+│   ├── util/
+│   │   ├── Arquivo.java           # Persistência genérica
+│   │   ├── ArvoreB.java           # Árvore B
+│   │   ├── Hash.java              # Hash Extensível
+│   │   ├── CriptografiaXOR.java   # Criptografia XOR
+│   │   ├── Huffman.java           # Compactação Huffman
+│   │   └── LZW.java               # Compactação LZW
+│   └── view/
+│       ├── Principal.java         # Menu principal
+│       ├── MenuCliente.java       # Menu de clientes
+│       ├── MenuAlimento.java      # Menu de alimentos
+│       ├── MenuReceitas.java      # Menu de receitas
+│       └── MenuBusca.java         # Menu de busca KMP/BM
+├── frontend/
+│   ├── index.html                 # Interface web
+│   ├── css/style.css              # Estilos
+│   └── js/scripts.js              # Lógica JavaScript
+├── dados/                         # Dados persistidos
+│   ├── clientes/
+│   ├── alimentos/
+│   └── receitas/
+├── lib/                           # Bibliotecas (JARs)
+├── scripts/
+│   └── seed_data.sh               # Carga de dados para testes
+├── run.sh                         # Script de execução
+└── README.md                      # Este arquivo
 
 ## Troubleshooting
 

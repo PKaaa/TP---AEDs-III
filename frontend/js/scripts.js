@@ -32,6 +32,7 @@ const PAGES = {
   clientes: { title: 'Clientes', sub: 'Gerenciar clientes', render: renderClientes },
   alimentos: { title: 'Alimentos', sub: 'Gerenciar alimentos', render: renderAlimentos },
   receitas: { title: 'Receitas', sub: 'Gerenciar receitas', render: renderReceitas },
+  pesquisa: { title: 'Pesquisa Avançada', sub: 'Busca com KMP e Boyer-Moore', render: renderPesquisa },
 };
 
 function goPage(page) {
@@ -826,4 +827,250 @@ function erroCard(msg) {
   return `<div class="table-card" style="padding:40px;text-align:center;color:var(--red)">
     ⚠️ <strong>Erro:</strong> ${esc(msg)}
   </div>`;
+}
+
+/* PÁGINA DE PESQUISA COM KMP/BM */
+function renderPesquisa() {
+    document.getElementById('topbar-action').innerHTML = '';
+    const c = document.getElementById('content');
+    c.innerHTML = `
+        <div class="table-card" style="max-width:700px;margin:0 auto">
+            <div style="padding:32px">
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:8px">
+                    🔍 Pesquisa por Padrão
+                </h2>
+                <p style="color:var(--ink60);margin-bottom:24px">
+                    Utilize os algoritmos KMP ou Boyer-Moore para buscar padrões nos dados do sistema.
+                </p>
+                
+                <div class="fg">
+                    <label>Digite o padrão (texto a buscar) *</label>
+                    <input id="pesquisa-padrao" class="fi" placeholder="Ex: frango, bolo, ana..." 
+                           onkeydown="if(event.key==='Enter') executarPesquisa()">
+                </div>
+                
+                <div class="fg-row" style="margin-bottom:16px">
+                    <div class="fg">
+                        <label>Algoritmo</label>
+                        <select id="pesquisa-algoritmo" class="fi">
+                            <option value="KMP">KMP (Knuth-Morris-Pratt)</option>
+                            <option value="BM">Boyer-Moore</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>Entidade</label>
+                        <select id="pesquisa-entidade" class="fi">
+                            <option value="clientes">Clientes (Nome)</option>
+                            <option value="alimentos">Alimentos (Nome)</option>
+                            <option value="receitas">Receitas (Título)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="btn btn-primary" onclick="executarPesquisa()" style="flex:1">
+                        🔍 Pesquisar
+                    </button>
+                    <button class="btn btn-ghost" onclick="limparPesquisa()">
+                        Limpar
+                    </button>
+                </div>
+                
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--ink10);
+                            background:var(--primary10);border-radius:var(--r);padding:14px;
+                            font-size:0.85rem;color:var(--ink60)">
+                    ℹ️ <strong>Dica:</strong> A busca é <strong>case-insensitive</strong> e encontra ocorrências 
+                    parciais dentro do campo textual.
+                </div>
+            </div>
+            
+            <div id="pesquisa-resultados" style="padding:0 32px 32px"></div>
+        </div>
+    `;
+    
+    setTimeout(() => document.getElementById('pesquisa-padrao')?.focus(), 100);
+}
+
+function executarPesquisa() {
+    const entidade = document.getElementById('pesquisa-entidade')?.value || 'clientes';
+    const padrao = document.getElementById('pesquisa-padrao')?.value?.trim();
+    
+    if (!padrao) {
+        toast('Digite um padrão para buscar', 'err');
+        return;
+    }
+    
+    if (entidade === 'clientes') pesquisarClientes();
+    else if (entidade === 'alimentos') pesquisarAlimentos();
+    else if (entidade === 'receitas') pesquisarReceitas();
+}
+
+function limparPesquisa() {
+    document.getElementById('pesquisa-padrao').value = '';
+    document.getElementById('pesquisa-padrao').focus();
+    const container = document.getElementById('pesquisa-resultados');
+    if (container) container.innerHTML = '';
+}
+
+/* PESQUISAR CLIENTES COM KMP/BM */
+async function pesquisarClientes() {
+    const padrao = document.getElementById('pesquisa-padrao')?.value?.trim();
+    const algoritmo = document.getElementById('pesquisa-algoritmo')?.value || 'KMP';
+    
+    if (!padrao) {
+        toast('Digite um padrão para buscar', 'err');
+        return;
+    }
+    
+    const c = document.getElementById('content');
+    c.innerHTML = `<div class="loading-wrap"><div class="spinner"></div> Buscando com ${algoritmo}...</div>`;
+    
+    const r = await api('GET', `/pesquisa/clientes?padrao=${encodeURIComponent(padrao)}&algoritmo=${algoritmo}`);
+    
+    if (!r.ok) {
+        c.innerHTML = erroCard(r.data.erro || 'Erro na busca');
+        return;
+    }
+    
+    c.innerHTML = `
+        <div class="table-card">
+            <div class="table-search" style="border-bottom:2px solid var(--primary10)">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <span style="font-weight:600;color:var(--primary);font-size:0.9rem">
+                        🔍 Resultados para "<strong>${esc(padrao)}</strong>" (${algoritmo})
+                    </span>
+                    <span class="badge badge-gold">${r.data.length} encontrado(s)</span>
+                    <button class="btn btn-ghost btn-sm" onclick="renderPesquisa()">↩ Voltar</button>
+                </div>
+            </div>
+            <div id="pesquisa-clientes-body"></div>
+        </div>`;
+    
+    const body = document.getElementById('pesquisa-clientes-body');
+    if (r.data.length === 0) {
+        body.innerHTML = emptyState('🔍', 'Nenhum cliente encontrado', `Tente outro padrão ou algoritmo`);
+    } else {
+        body.innerHTML = `<table>
+            <thead><tr><th>ID</th><th>Nome</th><th>E-mails</th><th>Nascimento</th><th>Cadastro</th></tr></thead>
+            <tbody>
+                ${r.data.map(cli => `
+                    <tr>
+                        <td><span class="badge badge-gold">#${cli.id}</span></td>
+                        <td>${esc(cli.nome)}</td>
+                        <td><div class="chips">
+                            ${(cli.email || []).map(e => `<span class="chip">${esc(e)}</span>`).join('') || '—'}
+                        </div></td>
+                        <td>${fmtDate(cli.dataNascimento)}</td>
+                        <td>${fmtDate(cli.dataAdicao)}</td>
+                    </tr>`).join('')}
+            </tbody>
+        </table>`;
+    }
+}
+
+/* PESQUISAR ALIMENTOS COM KMP/BM */
+async function pesquisarAlimentos() {
+    const padrao = document.getElementById('pesquisa-padrao')?.value?.trim();
+    const algoritmo = document.getElementById('pesquisa-algoritmo')?.value || 'KMP';
+    
+    if (!padrao) {
+        toast('Digite um padrão para buscar', 'err');
+        return;
+    }
+    
+    const c = document.getElementById('content');
+    c.innerHTML = `<div class="loading-wrap"><div class="spinner"></div> Buscando com ${algoritmo}...</div>`;
+    
+    const r = await api('GET', `/pesquisa/alimentos?padrao=${encodeURIComponent(padrao)}&algoritmo=${algoritmo}`);
+    
+    if (!r.ok) {
+        c.innerHTML = erroCard(r.data.erro || 'Erro na busca');
+        return;
+    }
+    
+    c.innerHTML = `
+        <div class="table-card">
+            <div class="table-search" style="border-bottom:2px solid var(--primary10)">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <span style="font-weight:600;color:var(--primary);font-size:0.9rem">
+                        🔍 Resultados para "<strong>${esc(padrao)}</strong>" (${algoritmo})
+                    </span>
+                    <span class="badge badge-gold">${r.data.length} encontrado(s)</span>
+                    <button class="btn btn-ghost btn-sm" onclick="renderPesquisa()">↩ Voltar</button>
+                </div>
+            </div>
+            <div id="pesquisa-alimentos-body"></div>
+        </div>`;
+    
+    const body = document.getElementById('pesquisa-alimentos-body');
+    if (r.data.length === 0) {
+        body.innerHTML = emptyState('🔍', 'Nenhum alimento encontrado', `Tente outro padrão ou algoritmo`);
+    } else {
+        body.innerHTML = `<table>
+            <thead><tr><th>ID</th><th>Nome</th><th>Categorias</th></tr></thead>
+            <tbody>
+                ${r.data.map(a => `
+                    <tr>
+                        <td><span class="badge badge-gold">#${a.id}</span></td>
+                        <td>${esc(a.nome)}</td>
+                        <td><div class="chips">
+                            ${(a.categoria || []).map(c => `<span class="chip">${esc(c)}</span>`).join('') || '—'}
+                        </div></td>
+                    </tr>`).join('')}
+            </tbody>
+        </table>`;
+    }
+}
+
+/* PESQUISAR RECEITAS COM KMP/BM */
+async function pesquisarReceitas() {
+    const padrao = document.getElementById('pesquisa-padrao')?.value?.trim();
+    const algoritmo = document.getElementById('pesquisa-algoritmo')?.value || 'KMP';
+    
+    if (!padrao) {
+        toast('Digite um padrão para buscar', 'err');
+        return;
+    }
+    
+    const c = document.getElementById('content');
+    c.innerHTML = `<div class="loading-wrap"><div class="spinner"></div> Buscando com ${algoritmo}...</div>`;
+    
+    const r = await api('GET', `/pesquisa/receitas?padrao=${encodeURIComponent(padrao)}&algoritmo=${algoritmo}`);
+    
+    if (!r.ok) {
+        c.innerHTML = erroCard(r.data.erro || 'Erro na busca');
+        return;
+    }
+    
+    c.innerHTML = `
+        <div class="table-card">
+            <div class="table-search" style="border-bottom:2px solid var(--primary10)">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <span style="font-weight:600;color:var(--primary);font-size:0.9rem">
+                        🔍 Resultados para "<strong>${esc(padrao)}</strong>" (${algoritmo})
+                    </span>
+                    <span class="badge badge-gold">${r.data.length} encontrado(s)</span>
+                    <button class="btn btn-ghost btn-sm" onclick="renderPesquisa()">↩ Voltar</button>
+                </div>
+            </div>
+            <div id="pesquisa-receitas-body"></div>
+        </div>`;
+    
+    const body = document.getElementById('pesquisa-receitas-body');
+    if (r.data.length === 0) {
+        body.innerHTML = emptyState('🔍', 'Nenhuma receita encontrada', `Tente outro padrão ou algoritmo`);
+    } else {
+        body.innerHTML = `<table>
+            <thead><tr><th>ID</th><th>Título</th><th>Tempo</th><th>Porção</th></tr></thead>
+            <tbody>
+                ${r.data.map(r => `
+                    <tr>
+                        <td><span class="badge badge-gold">#${r.id}</span></td>
+                        <td>${esc(r.titulo)}</td>
+                        <td><span class="badge badge-gold">⏱ ${r.tempoPreparo}min</span></td>
+                        <td>${esc(r.porcao || '—')}</td>
+                    </tr>`).join('')}
+            </tbody>
+        </table>`;
+    }
 }
